@@ -3,22 +3,27 @@ const logger = require("../utils/logger"); // Add a logger utility
 
 async function addReceipt(req, res) {
     try {
-        const { patient_name, patient_phone, service, total, mode_of_payment, amount_paid, balance } = req.body;
-        const receipt = await ReceiptItem.createReceipt(patient_name, patient_phone, service, total, mode_of_payment, amount_paid, balance);
+        const { patient_name, patient_phone, service, qty, discount, amount, total, mode_of_payment, amount_paid, balance } = req.body;
+        const receipt = await ReceiptItem.createReceipt(patient_name, patient_phone, service, qty || 1, discount || 0, amount || total || 0, total || 0, mode_of_payment, amount_paid || 0, balance || 0);
 
         if (receipt) {
             const data = await ReceiptItem.getReceipts();
             res.status(201).render("receipts", {
                 title: "Receipts",
-                receipts: data
+                receipts: data,
+                user: req.user
             });
         } else {
             logger.error("Failed to add receipt: Database operation returned null");
-            res.status(500).json({ message: "Error adding receipt" });
+            if (!res.headersSent) {
+                return res.status(500).json({ message: "Error adding receipt" });
+            }
         }
     } catch (error) {
         logger.error(`Error in addReceipt: ${error.message}`, error);
-        res.status(500).json({ message: "Internal server error" });
+        if (!res.headersSent) {
+            res.status(500).json({ message: "Internal server error" });
+        }
     }
 }
 
@@ -34,7 +39,9 @@ async function deleteReciept(req, res) {
         }
     } catch (error) {
         logger.error(`Error in deleteReciept: ${error.message}`, error);
-        res.status(500).json({ message: "Error deleting receipt" });
+        if (!res.headersSent) {
+            res.status(500).json({ message: "Error deleting receipt" });
+        }
     }
 }
 
@@ -44,6 +51,11 @@ async function getAllReceipts(req, res, next) {
         data.forEach(receipt => {
             if (typeof receipt.service === "string") {
                 receipt.service = JSON.parse(receipt.service).join(", ");
+            }
+
+            // Format phone numbers to replace '0' with '256'
+            if (receipt.patient_phone.startsWith('0')) {
+                receipt.patient_phone = '256' + receipt.patient_phone.slice(1);
             }
         });
 
@@ -93,7 +105,7 @@ async function receiptDetails(req, res, next) {
 async function updateReceipt(req, res) {
     try {
         const receipt_id = req.params.receipt_id;
-        const { patient_name, patient_phone, service, total, mode_of_payment, amount_paid, balance } = req.body;
+        const { patient_name, patient_phone, service, qty, discount, amount, total, mode_of_payment, amount_paid, balance } = req.body;
 
         // Fetch the receipt details to pre-fill the form
         const receipt = await ReceiptItem.getReceiptDetails(receipt_id);
@@ -107,10 +119,13 @@ async function updateReceipt(req, res) {
             patient_name,
             patient_phone,
             service,
-            total,
+            qty || 1,
+            discount || 0,
+            amount || total || 0,
+            total || 0,
             mode_of_payment,
-            amount_paid,
-            balance
+            amount_paid || 0,
+            balance || 0
         );
 
         if (updated) {
@@ -125,7 +140,9 @@ async function updateReceipt(req, res) {
         }
     } catch (error) {
         logger.error(`Error in updateReceipt: ${error.message}`, error);
-        res.status(500).json({ message: "Error updating receipt" });
+        if (!res.headersSent) {
+            res.status(500).json({ message: "Error updating receipt" });
+        }
     }
 }
 

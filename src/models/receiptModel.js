@@ -1,11 +1,11 @@
 const initializeDatabase = require("../config/db");
 const logger = require("../utils/logger"); // Add a logger utility
 
-async function createReceipt(patient_name, patient_phone, service, total, mode_of_payment, amount_paid, balance) {
+async function createReceipt(patient_name, patient_phone, service, qty, discount, amount, total, mode_of_payment, amount_paid, balance) {
     const db = await initializeDatabase();
     try {
-        const sql = "INSERT INTO receipts (patient_name, patient_phone, service, total, mode_of_payment,amount_paid, balance) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        const [result] = await db.query(sql, [patient_name, patient_phone, service, total, mode_of_payment, amount_paid, balance]);
+        const sql = "INSERT INTO receipts (patient_name, patient_phone, service, qty, discount, amount, total, mode_of_payment, amount_paid, balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        const [result] = await db.query(sql, [patient_name, patient_phone, service, qty, discount, amount, total, mode_of_payment, amount_paid, balance]);
         return result;
     } catch (error) {
         logger.error(`Error in createReceipt: ${error.message}`, error);
@@ -57,18 +57,21 @@ async function deleteReceipt(id) {
     }
 }
 
-async function updateReceipt(id, patient_name, patient_phone, service, total, mode_of_payment, amount_paid, balance) {
+async function updateReceipt(id, patient_name, patient_phone, service, qty, discount, amount, total, mode_of_payment, amount_paid, balance) {
     const db = await initializeDatabase();
     try {
         const sql = `
             UPDATE receipts
-            SET patient_name = ?, patient_phone = ?, service = ?, total = ?, mode_of_payment = ?, amount_paid = ?, balance = ?
+            SET patient_name = ?, patient_phone = ?, service = ?, qty = ?, discount = ?, amount = ?, total = ?, mode_of_payment = ?, amount_paid = ?, balance = ?
             WHERE id = ?
         `;
         const [result] = await db.query(sql, [
             patient_name,
             patient_phone,
             service,
+            qty,
+            discount,
+            amount,
             total,
             mode_of_payment,
             amount_paid,

@@ -1,0 +1,146 @@
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+.sidebar{
+    width:240px;
+    background:#1f2937;
+    min-height:100vh;
+    padding:20px 0;
+    font-family:Arial, sans-serif;
+}
+
+.sidebar-menu{
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+
+.sidebar-title{
+    color:#000000;
+    font-size:15px;
+    text-transform:uppercase;
+    padding:15px 25px 8px;
+    letter-spacing:1px;
+}
+
+.sidebar-menu li a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 25px;
+    color:#000000;
+    text-decoration:none;
+    font-size:15px;
+    transition:all 0.2s ease;
+}
+
+.sidebar-menu li a i{
+    width:18px;
+    text-align:center;
+    color:#ffffff;
+}
+
+/* Hover */
+
+.sidebar-menu li a:hover{
+    background:#374151;
+    color:white;
+}
+
+/* Print View */
+@media print {
+    .sidebar {
+        display: none;
+    }
+}
+
+/* Active link */
+
+.sidebar-menu li a.active{
+    background:#2563eb;
+    color:white;
+    border-left:4px solid #60a5fa;
+}
+
+.sidebar-menu li a.active i{
+    color:white;
+}
+
+/* Logout */
+
+.logout-link{
+    color:#f87171;
+}
+
+.logout-link:hover{
+    background:#3f1d1d;
+    color:#fca5a5;
+}
+
+</style>
+
+
+
+<% if (user) { %>
+
+<aside class="sidebar">
+
+<ul class="sidebar-menu">
+
+<li class="sidebar-title">Menu</li>
+
+<li>
+<a href="/" class="<%= title === 'Dashboard' ? 'active' : '' %>">
+<i class="fa-solid fa-chart-line"></i>
+<span>Dashboard</span>
+</a>
+</li>
+
+
+<li class="sidebar-title">Documents</li>
+
+<li>
+<a href="/invoices" class="<%= title && title.includes('Invoice') ? 'active' : '' %>">
+<i class="fa-solid fa-file-invoice"></i>
+<span>Invoices</span>
+</a>
+</li>
+
+<li>
+<a href="/invoices/new" class="<%= title === 'Create Invoice' ? 'active' : '' %>">
+<i class="fa-solid fa-plus"></i>
+<span>New Invoice</span>
+</a>
+</li>
+
+<li>
+<a href="/receipts" class="<%= title && title.includes('Receipt') ? 'active' : '' %>">
+<i class="fa-solid fa-receipt"></i>
+<span>Receipts</span>
+</a>
+</li>
+
+<li>
+<a href="/receipt" class="<%= title === 'Receipt Form' ? 'active' : '' %>">
+<i class="fa-solid fa-plus"></i>
+<span>New Receipt</span>
+</a>
+</li>
+
+
+<li class="sidebar-title">Account</li>
+
+<li>
+<a href="/account/logout" class="logout-link">
+<i class="fa-solid fa-right-from-bracket"></i>
+<span>Logout</span>
+</a>
+</li>
+
+</ul>
+
+</aside>
+
+<% } %>

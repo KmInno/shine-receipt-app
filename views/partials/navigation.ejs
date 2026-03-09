@@ -4,6 +4,11 @@
     <a href="/"><span class="brand-name">Shine Dental Surgery</span></a>
   </div>
   <div class="navbar-right">
-    <a href="/account/logout" class="account-link">Logout</a>
+    <% if (user) { %>
+      <span style="margin-right: 20px; font-size: 14px;">Welcome, <%= user.name %></span>
+      <a href="/account/logout" class="account-link">Logout</a>
+    <% } else { %>
+      <a href="/account/login" class="account-link">Login</a>
+    <% } %>
   </div>
 </nav>

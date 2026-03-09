@@ -2,3 +2,19 @@
 2025-10-18T20:20:55.005Z [ERROR]: Failed to add receipt: Database operation returned null
 2025-10-18T20:21:03.238Z [ERROR]: Error in createReceipt: Unknown column 'balance' in 'field list' Unknown column 'balance' in 'field list'
 2025-10-18T20:21:03.243Z [ERROR]: Failed to add receipt: Database operation returned null
+2026-03-08T15:26:22.490Z [ERROR]: Error in getLastInvoiceNumber: Table 'receipt_app.invoices' doesn't exist Table 'receipt_app.invoices' doesn't exist
+2026-03-08T15:26:22.678Z [ERROR]: Error in createInvoice: Table 'receipt_app.invoices' doesn't exist Table 'receipt_app.invoices' doesn't exist
+2026-03-08T15:26:22.683Z [ERROR]: Failed to add invoice: Database operation returned null
+2026-03-08T20:03:39.291Z [WARN]: Receipt details not found for ID new
+2026-03-09T13:19:14.544Z [ERROR]: Error in createReceipt: Unknown column 'patient_id' in 'field list' Unknown column 'patient_id' in 'field list'
+2026-03-09T13:19:14.557Z [ERROR]: Failed to add receipt: Database operation returned null
+2026-03-09T13:28:39.637Z [ERROR]: Error in createReceipt: Unknown column 'patient_id' in 'field list' Unknown column 'patient_id' in 'field list'
+2026-03-09T13:28:39.643Z [ERROR]: Failed to add receipt: Database operation returned null
+2026-03-09T13:30:03.997Z [ERROR]: Error in createReceipt: Unknown column 'patient_id' in 'field list' Unknown column 'patient_id' in 'field list'
+2026-03-09T13:30:04.352Z [ERROR]: Error in addReceipt: error is not defined error is not defined
+2026-03-09T13:41:44.232Z [ERROR]: Error in createReceipt: Unknown column 'qty' in 'field list' Unknown column 'qty' in 'field list'
+2026-03-09T13:41:44.237Z [ERROR]: Failed to add receipt: Database operation returned null
+2026-03-09T13:43:06.104Z [ERROR]: Error in createReceipt: Unknown column 'discount' in 'field list' Unknown column 'discount' in 'field list'
+2026-03-09T13:43:06.113Z [ERROR]: Failed to add receipt: Database operation returned null
+2026-03-09T13:44:25.197Z [ERROR]: Error in createReceipt: Unknown column 'amount' in 'field list' Unknown column 'amount' in 'field list'
+2026-03-09T13:44:25.205Z [ERROR]: Failed to add receipt: Database operation returned null

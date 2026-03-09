@@ -1,189 +1,241 @@
-<title>Receipt Form</title>
+<title>Create Receipt</title>
+
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    padding: 20px;
-    background-color: #f4f4f4;
-  }
 
-  .container {
-    max-width: 400px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
+body{
+    font-family: Arial;
+    background:#f4f4f4;
+}
 
-  label {
-    font-weight: bold;
-  }
+.container{
+    max-width:700px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:6px;
+}
 
-  input,
-  button {
-    width: 100%;
-    margin-top: 10px;
-    padding: 8px;
-  }
+h2{
+    text-align:center;
+}
 
-  .service-entry {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-  }
+label{
+    font-weight:bold;
+    display:block;
+    margin-top:10px;
+}
 
-  .service-entry input {
-    flex: 1;
-  }
+input,select,button{
+    width:100%;
+    padding:8px;
+    margin-top:5px;
+}
 
-  .price-input {
-    max-width: 120px;
-  }
+.services-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
 
-  .mode-of-payment {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: row;
-  }
+.services-table th,
+.services-table td{
+    border:1px solid #ccc;
+    padding:6px;
+}
+
+.add-btn{
+    margin-top:10px;
+    background:#007bff;
+    color:white;
+    border:none;
+}
+
+.submit-btn{
+    margin-top:20px;
+    background:#28a745;
+    color:white;
+    border:none;
+}
+
 </style>
-</head>
-
-<body>
-  <div class="container">
-    <h2>Create Receipt</h2>
-    <form id="receiptForm" action="/receipt/create" method="POST">
-      <label for="patient_name">Patient Name:</label>
-      <input type="text" id="patient_name" name="patient_name" required />
-
-      <label for="phone_number">Phone Number:</label>
-      <input type="text" id="phone_number" name="patient_phone" required />
-
-      <label>Services:</label>
-      <div id="servicesContainer">
-        <!-- Service entries will be appended here -->
-      </div>
-      <button type="button" onclick="addService()">Add Service</button>
-
-      <!-- Hidden field that will hold the combined services (names only) -->
-      <input type="hidden" id="service" name="service" />
-
-      <label for="total">Total Amount (UGX):</label>
-      <input type="number" id="total" name="total" step="0.01" readonly required />
-      <label>Mode of Payment:</label>
 
 
-      <section class="mode-of-payment">
-        <div>
-          <div>
-            <label for="cash">Cash</label>
-            <label for="mobile_money">Mobile Money</label>
-            <label for="visa">Visa</label>
-          </div>
-        </div>
-        <div>
-          <input type="radio" id="cash" name="mode_of_payment" value="cash" required>
-          <input type="radio" id="mobile_money" name="mode_of_payment" value="mobile money" required>
-          <input type="radio" id="visa" name="mode_of_payment" value="visa" required>
+<div class="container">
 
-        </div>
+<h2>Create Receipt</h2>
 
-      </section>
+<form id="receiptForm" action="/receipt/create" method="POST">
+
+<!-- <label>Receipt Name</label>
+<input type="text" name="receipt_name">
+
+<label>Patient Number</label>
+<input type="text" name="patient_number"> -->
+
+<label>Patient Name</label>
+<input type="text" name="patient_name" required>
+
+<label>Phone</label>
+<input type="text" name="patient_phone" required>
+
+
+<h3>Services</h3>
+
+<table class="services-table">
+
+<thead>
+
+<tr>
+<th>Service</th>
+<th>Unit Price</th>
+<th>Qty</th>
+<th>Discount</th>
+<th>Amount</th>
+<th>Remove</th>
+</tr>
+
+</thead>
+
+<tbody id="servicesContainer"></tbody>
+
+</table>
+
+<button type="button" class="add-btn" onclick="addService()">Add Service</button>
+
+
+<input type="hidden" id="service" name="service">
+
+<label>Total (UGX)</label>
+<input type="number" id="total" name="total" readonly>
+
+
+<label>Mode of Payment</label>
+
+<select name="mode_of_payment" required>
+
+<option value="">Select</option>
+<option value="cash">Cash</option>
+<option value="mobile money">Mobile Money</option>
+<option value="visa">Visa</option>
+
+</select>
+
+
+<label>Amount Paid (UGX)</label>
+<input type="number" id="amount_paid" name="amount_paid" value="0">
+
+<input type="hidden" id="balance" name="balance">
+
+
+<button type="submit" class="submit-btn">Create Receipt</button>
+
+</form>
+
+</div>
+
+<script>
+
+function addService(){
+
+<%- include('partials/footer') %>
+
+const table = document.getElementById("servicesContainer");
+
+const row = document.createElement("tr");
+
+row.innerHTML = `
+
+<td><input type="text" class="service-name" required></td>
+<td><input type="number" class="price" value="0"></td>
+<td><input type="number" class="qty" value="1"></td>
+
+<td><input type="number" class="discount" value="0"></td>
+
+<td><input type="number" class="amount" value="0" readonly></td>
+
+<td><button type="button" onclick="this.closest('tr').remove();calculateTotal()">X</button></td>
+
+`;
+
+table.appendChild(row);
+
+row.querySelectorAll("input").forEach(i => {
+i.addEventListener("input", calculateTotal);
+});
+
+calculateTotal();
+}
 
 
 
-      <label for="balance">Amount Paid (UGX):</label>
-      <input type="number" id="amount_paid" name="amount_paid" value="0" step="0.01" required />
+function calculateTotal(){
 
-      <!-- Hidden field for balance -->
-      <input type="hidden" id="balance" name="balance" />
+let total = 0;
 
-      <button type="submit">Submit Receipt</button>
-    </form>
-  </div>
+document.querySelectorAll("#servicesContainer tr").forEach(row => {
 
-  <script>
-    // Function to add a new service entry (service name and price)
-    function addService() {
-      const container = document.getElementById("servicesContainer");
+const price = parseFloat(row.querySelector(".price").value) || 0;
+const qty = parseFloat(row.querySelector(".qty").value) || 1;
+const discount = parseFloat(row.querySelector(".discount").value) || 0;
 
-      // Create a wrapper div for the service entry
-      const serviceDiv = document.createElement("div");
-      serviceDiv.className = "service-entry";
+const amount = (price * qty) - discount;
+row.querySelector(".amount").value = amount;
 
-      // Create input for the service name
-      const serviceName = document.createElement("input");
-      serviceName.type = "text";
-      serviceName.placeholder = "Service Name";
-      serviceName.required = true;
+total += amount;
 
-      // Create input for the service price
-      const servicePrice = document.createElement("input");
-      servicePrice.type = "number";
-      servicePrice.placeholder = "Price";
-      servicePrice.className = "price-input";
-      servicePrice.step = "0.01";
-      servicePrice.required = true;
+});
 
-      // When the price changes, recalc the total
-      servicePrice.addEventListener("input", calculateTotal);
+document.getElementById("total").value = total;
 
-      // Append inputs to the service entry container
-      serviceDiv.appendChild(serviceName);
-      serviceDiv.appendChild(servicePrice);
+calculateBalance();
 
-      // Append the service entry to the main container
-      container.appendChild(serviceDiv);
+}
 
-      // Update total after adding a new service entry (in case there are pre-filled values)
-      calculateTotal();
-    }
 
-    // Function to calculate the total from all price fields
-    function calculateTotal() {
-      let total = 0;
-      const priceInputs = document.querySelectorAll('.service-entry input[type="number"]');
-      priceInputs.forEach(input => {
-        const value = parseFloat(input.value);
-        if (!isNaN(value)) {
-          total += value;
-        }
-      });
-      document.getElementById("total").value = total.toFixed(2);
-      calculateBalance();
-    }
 
-    // Function to calculate the balance
-    function calculateBalance() {
-      const total = parseFloat(document.getElementById("total").value) || 0;
-      const amountPaid = parseFloat(document.getElementById("amount_paid").value) || 0;
-      const balance = total - amountPaid;
-      document.getElementById("balance").value = balance.toFixed(2);
-    }
+function calculateBalance(){
 
-    // Add event listener to recalculate balance when amount paid changes
-    document.getElementById("amount_paid").addEventListener("input", calculateBalance);
+const total = parseFloat(document.getElementById("total").value) || 0;
 
-    // On form submission, combine all service names into a single hidden field "services"
-    document.getElementById("receiptForm").addEventListener("submit", function (event) {
-      const serviceEntries = document.querySelectorAll("#servicesContainer .service-entry");
-      const servicesArray = [];
-      serviceEntries.forEach(entry => {
-        // Get the service name from the first input of each entry
-        const nameInput = entry.querySelector('input[type="text"]');
-        if (nameInput && nameInput.value.trim() !== "") {
-          servicesArray.push(nameInput.value.trim());
-        }
-      });
-      // Store the combined service names as a JSON string
-      document.getElementById("service").value = JSON.stringify(servicesArray);
-    });
+const paid = parseFloat(document.getElementById("amount_paid").value) || 0;
 
-    // Optionally add one service entry by default when the page loads
-    window.addEventListener("DOMContentLoaded", () => {
-      addService();
-    });
-  </script>
-</body>
+document.getElementById("balance").value = total - paid;
 
-</html>
+}
+
+document.getElementById("amount_paid").addEventListener("input", calculateBalance);
+
+
+
+document.getElementById("receiptForm").addEventListener("submit", function(){
+
+const services = [];
+
+document.querySelectorAll("#servicesContainer tr").forEach(row => {
+
+services.push({
+
+name: row.querySelector(".service-name").value,
+
+qty: row.querySelector(".qty").value,
+
+discount: row.querySelector(".discount").value,
+
+amount: row.querySelector(".amount").value
+
+});
+
+});
+
+document.getElementById("service").value = JSON.stringify(services);
+
+});
+
+
+window.onload = function(){
+
+addService();
+
+}
+
+</script>

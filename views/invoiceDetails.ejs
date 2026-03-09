@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+        }
+
+        .invoice-container {
+            width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+        }
+
+        /* COMPANY HEADER */
+
+        .company-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .company-header h2 {
+            margin: 0;
+        }
+
+        .company-info {
+            font-size: 13px;
+        }
+
+        /* CLIENT + INVOICE BOX */
+
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .box {
+            width: 45%;
+        }
+
+        .box table {
+            width: 100%;
+        }
+
+        .box td {
+            padding: 4px;
+        }
+
+        /* ITEM TABLE */
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .items-table th,
+        .items-table td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+
+        .items-table th {
+            background: #eee;
+        }
+
+        /* TOTAL BOX */
+
+        .total-box {
+            width: 300px;
+            float: right;
+            margin-top: 20px;
+        }
+
+        .total-box table {
+            width: 100%;
+        }
+
+        .total-box td {
+            padding: 6px;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            margin-top: 80px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .actions {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-print {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+        .company-header img {
+            width: 100%;
+            max-width: 840px;
+        }
+
+
+
+        @media print {
+
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+
+            body {
+                background: white;
+                font-size: 12px;
+            }
+
+            .invoice-container {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+                background: white;
+            }
+
+            /* Keep layout intact */
+            .top-section {
+                page-break-inside: avoid;
+            }
+
+            .items-table {
+                page-break-inside: auto;
+            }
+
+            .items-table tr {
+                page-break-inside: avoid;
+            }
+
+            /* Resize logo nicely */
+            .company-header img {
+                width: 100%;
+                max-width: 750px;
+            }
+
+            /* Hide buttons */
+            .actions,
+            button {
+                display: none !important;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="invoice-container">
+
+        <!-- COMPANY HEADER -->
+
+        <div class="company-header">
+
+            <img src="/images/reciept_logo.png" alt="Receipt Logo">
+
+
+        </div>
+
+
+        <!-- CLIENT + INVOICE -->
+
+        <div class="top-section">
+
+            <div class="box">
+
+                <b>CLIENT</b>
+
+                <table>
+
+                    <tr>
+                        <td>Name</td>
+                        <td>
+                            <%= invoice.client_name %>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Address</td>
+                        <td>
+                            <%= invoice.client_address || '-' %>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Telephone</td>
+                        <td>
+                            <%= invoice.client_tel %>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+
+            <div class="box">
+
+                <b>INVOICE</b>
+
+                <table>
+
+                    <tr>
+                        <td>Invoice</td>
+                        <td>
+                            <%= invoice.invoice_number %>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Date</td>
+                        <td>
+                            <%= new Date(invoice.invoice_date).toLocaleDateString('en-GB') %>
+                        </td>
+                    </tr>
+
+                    <!-- LPO removed -->
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- ITEMS -->
+
+        <table class="items-table">
+
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Item Name</th>
+                    <th>Qty</th>
+                    <th>Unit</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <% let i=1; invoice.items.forEach(item=> { %>
+
+                    <tr>
+
+                        <td>
+                            <%= i++ %>
+                        </td>
+
+                        <td>
+                            <%= item.item_name %>
+                        </td>
+
+                        <td>
+                            <%= item.qty %>
+                        </td>
+
+                        <td>
+                            <%= item.unit || 'Piece' %>
+                        </td>
+
+                        <td>UGX <%= parseFloat(item.unit_price).toLocaleString() %>
+                        </td>
+
+                        <td>UGX <%= parseFloat(item.amount).toLocaleString() %>
+                        </td>
+
+                    </tr>
+
+                    <% }) %>
+
+            </tbody>
+
+        </table>
+
+
+        <!-- TOTALS -->
+
+        <div class="total-box">
+
+            <table>
+
+                <tr>
+                    <td>Sub Total</td>
+                    <td>UGX <%= parseFloat(invoice.total).toLocaleString() %>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Discount</td>
+                    <td>0</td>
+                </tr>
+
+                <tr>
+                    <td>Net Amount</td>
+                    <td>UGX <%= parseFloat(invoice.total).toLocaleString() %>
+                    </td>
+                </tr>
+
+                <tr>
+                    <!-- <td>WHT 6%</td>
+                    <td>0</td> -->
+                </tr>
+
+                <tr>
+                    <td><b>Total Amount</b></td>
+                    <td><b>UGX <%= parseFloat(invoice.total).toLocaleString() %></b></td>
+                </tr>
+
+            </table>
+
+        </div>
+
+
+        <div style="clear:both"></div>
+
+
+        <div class="footer">
+            Thank you for choosing SHINE DENTAL SURGERY. We look forward to serving you again!
+            <%- include('partials/footer') %>
+        </div>
+
+
+        <!-- ACTION BUTTONS -->
+
+        <div class="actions">
+
+            <button class="btn-print" onclick="window.print()">Print</button>
+
+            <% if (user && user.usertype==='admin' ) { %>
+                <a href="/invoices/edit/<%= invoice.id %>">
+                    <button class="btn-edit">Edit</button>
+                </a>
+                <% } %>
+
+                    <a href="/invoices">
+                        <button class="btn-back">Back</button>
+                    </a>
+
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>

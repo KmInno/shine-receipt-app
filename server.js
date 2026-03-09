@@ -6,6 +6,7 @@ const cors = require("cors");
 const path = require("path");
 const authenticateToken = require('./src/middleware/authMiddleware');
 const receiptRoutes = require("./src/routes/receiptRoutes");
+const invoiceRoutes = require("./src/routes/invoiceRoutes");
 const baseController = require("./src/controllers/baseController");
 const flash = require("connect-flash");
 const session = require("express-session");
@@ -66,13 +67,14 @@ app.use("/receipts", require("./src/routes/receiptRoutes"));
 app.use("/receiptDetails", require("./src/routes/receiptRoutes"));
 // app.use("/delete", require("./src/routes/receiptRoutes"));
 
+// Invoice routes
+app.use("/invoices", invoiceRoutes);
+
 // login routes
 app.use("/account", accountRoutes);
 
 // Protected route 
-app.get('/', authenticateToken, (req, res) => {
-    res.render('index', { title:'Dashboard', user: req.user });
-});
+app.get('/', authenticateToken, baseController.buildHome);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
