@@ -56,15 +56,55 @@ app.set("layout", "./layouts/layout");
 // Routes
 app.use(static);
 
+// Middleware to prevent multiple response sends
+app.use((req, res, next) => {
+    const originalRender = res.render;
+    const originalSend = res.send;
+    const originalJson = res.json;
+    
+    res.render = function(...args) {
+        if (res.headersSent) {
+            logger.warn(`Attempt to render after headers already sent on ${req.method} ${req.path}`);
+            return;
+        }
+        return originalRender.apply(res, args);
+    };
+    
+    res.send = function(...args) {
+        if (res.headersSent) {
+            logger.warn(`Attempt to send after headers already sent on ${req.method} ${req.path}`);
+            return;
+        }
+        return originalSend.apply(res, args);
+    };
+    
+    res.json = function(...args) {
+        if (res.headersSent) {
+            logger.warn(`Attempt to json after headers already sent on ${req.method} ${req.path}`);
+            return;
+        }
+        return originalJson.apply(res, args);
+    };
+    
+    next();
+});
+
 // Serve views folder
 app.use("/", baseRoutes);
 
+<<<<<<< Updated upstream
 app.get("/receipt", require("./src/routes/baseroute"));
 
 app.use("/receipt", require("./src/routes/receiptRoutes"));
 app.use("/receipts", require("./src/routes/receiptRoutes"));
 app.use("/receiptDetails", require("./src/routes/receiptRoutes"));
 // app.use("/delete", require("./src/routes/receiptRoutes"));
+=======
+// Consolidated receipt routes - mount on multiple paths for compatibility
+app.use("/receipts", receiptRoutes);
+app.use("/receipt", receiptRoutes);  // for backward compatibility
+app.use("/receiptDetails", receiptRoutes);
+>>>>>>> Stashed changes
 
 // login routes
 app.use("/account", accountRoutes);

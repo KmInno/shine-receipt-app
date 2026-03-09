@@ -38,7 +38,11 @@
                         <td class="names"> <a href="/receiptDetails/<%= receipt.id %>"><%= receipt.patient_name %></a> </td>
                         <td>
                             <a 
+<<<<<<< Updated upstream
                                 href="https://wa.me/<%= receipt.patient_phone.replace(/\D/g, '') %>?text=Hello%20<%= encodeURIComponent(receipt.patient_name) %>,%20your%20balance%20is%20<%= encodeURIComponent(receipt.balance) %>."
+=======
+                                href="https://wa.me/<%= digits %>?text=<%= encodeURIComponent('Hello ' + receipt.patient_name + ' welcome to Shine Dental Surgery (Mengo). Thank you for choosing us.') %>"
+>>>>>>> Stashed changes
                                 target="_blank"
                                 style="color: #25D366; text-decoration: none;"
                                 title="Send WhatsApp message"
