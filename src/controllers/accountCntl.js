@@ -66,7 +66,7 @@ async function accountLogin(req, res) {
 
         res.cookie("jwt", token, { httpOnly: true, secure: req.secure || process.env.NODE_ENV === "production" });
         req.flash("success", "Login successful");
-        res.redirect("/receipts");
+        res.redirect("/");
     } catch (error) {
         console.error('Error during login:', error);
         req.flash("error", "An error occurred during login");

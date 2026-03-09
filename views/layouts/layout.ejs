@@ -6,7 +6,8 @@
         <div id="wrapper">
             <%- include('../partials/header') %>
                 <%- include('../partials/navigation') %>
-                    <main>
+                <%- include('../partials/sidebar') %>
+                    <main style="margin-left: <% if (user) { %>250px<% } else { %>0px<% } %>; min-height: calc(100vh - 70px);" class="main-content">
                         <%- body %>
                     </main>
 

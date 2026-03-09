@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-container {
+            padding: 30px;
+            background-color: #f5f7fb;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            margin-bottom: 35px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 36px;
+            color: #1f2937;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .dashboard-header p {
+            color: #6b7280;
+            margin: 5px 0 0 0;
+            font-size: 15px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            background-color: #f3f4f6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .stat-card.receipts .stat-icon {
+            background-color: #eff6ff;
+            color: #0284c7;
+        }
+
+        .stat-card.invoices .stat-icon {
+            background-color: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .stat-card.balance .stat-icon {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+
+        .stat-card.status .stat-icon {
+            background-color: #fce7f3;
+            color: #ea580c;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .stat-subtext {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-top: 6px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 20px;
+            background: white;
+            color: #0284c7;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .action-button:hover {
+            background-color: #f0f9ff;
+            border-color: #0284c7;
+        }
+
+        .action-button.primary {
+            background: #0284c7;
+            color: white;
+            border-color: #0284c7;
+        }
+
+        .action-button.primary:hover {
+            background: #0369a1;
+        }
+
+        .section {
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #0284c7;
+            font-size: 20px;
+        }
+
+        .recent-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .recent-table th {
+            background-color: #f9fafb;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .recent-table td {
+            padding: 14px;
+            border-bottom: 1px solid #f3f4f6;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .recent-table tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .recent-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #d1d5db;
+        }
+
+        .empty-state a {
+            color: #0284c7;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .empty-state a:hover {
+            text-decoration: underline;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-paid {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-sent {
+            background-color: #dbeafe;
+            color: #0c4a6e;
+        }
+
+        .status-draft {
+            background-color: #fed7aa;
+            color: #92400e;
+        }
+
+        .status-cancelled {
+            background-color: #fecaca;
+            color: #7f1d1d;
+        }
+
+        .view-all-link {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 10px 16px;
+            background: #0284c7;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+
+        .view-all-link:hover {
+            background: #0369a1;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .dashboard-header h1 {
+                font-size: 28px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .recent-table {
+                font-size: 12px;
+            }
+
+            .recent-table th,
+            .recent-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Welcome back, <%= user.name %></h1>
+            <p>Here's your business overview for today</p>
+        </div>
+
+        <!-- Statistics Grid -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Receipts</div>
+                <div class="stat-value"><%= stats.totalReceipts %></div>
+                <div class="stat-subtext">UGX <%= Number(stats.totalReceiptAmount).toLocaleString('en-US') %></div>
+            </div>
+
+            <div class="stat-card invoice">
+                <div class="stat-label">Total Invoices</div>
+                <div class="stat-value"><%= stats.totalInvoices %></div>
+                <div class="stat-subtext">UGX <%= Number(stats.totalInvoiceAmount).toLocaleString('en-US') %></div>
+            </div>
+
+            <div class="stat-card balance">
+                <div class="stat-label">Outstanding Balance</div>
+                <div class="stat-value">UGX <%= Number(stats.totalReceiptBalance).toLocaleString('en-US') %></div>
+                <div class="stat-subtext">From receipts</div>
+            </div>
+
+            <div class="stat-card paid">
+                <div class="stat-label">Invoice Status</div>
+                <div class="stat-value"><%= stats.paidInvoices %>/<%= stats.totalInvoices %></div>
+                <div class="stat-subtext"><%= stats.sentInvoices %> sent, <%= stats.draftInvoices %> draft</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="/invoices/new" class="action-button secondary">➕ Create Invoice</a>
+            <a href="/receipt" class="action-button secondary">➕ Create Receipt</a>
+            <a href="/invoices" class="action-button">📋 View Invoices</a>
+            <a href="/receipts" class="action-button">📄 View Receipts</a>
+        </div>
+
+        <!-- Recent Invoices -->
+        <div class="section">
+            <div class="section-title">Recent Invoices</div>
+            <% if (recentInvoices && recentInvoices.length > 0) { %>
+                <table class="recent-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Client</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% recentInvoices.forEach(invoice => { %>
+                            <tr>
+                                <td><strong><%= invoice.invoice_number %></strong></td>
+                                <td><%= invoice.client_name %></td>
+                                <td><%= new Date(invoice.invoice_date).toLocaleDateString('en-GB') %></td>
+                                <td>UGX <%= Number(invoice.total).toLocaleString('en-US') %></td>
+                                <td>
+                                    <span class="status-badge status-<%= invoice.status %>">
+                                        <%= invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1) %>
+                                    </span>
+                                </td>
+                                <td><a href="/invoices/<%= invoice.id %>" style="color: #007bff; text-decoration: none;">View</a></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+                <a href="/invoices" class="view-all-link">View All Invoices →</a>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <p>No invoices yet. <a href="/invoices/new" style="color: #007bff;">Create one now</a></p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Recent Receipts -->
+        <div class="section">
+            <div class="section-title">Recent Receipts</div>
+            <% if (recentReceipts && recentReceipts.length > 0) { %>
+                <table class="recent-table">
+                    <thead>
+                        <tr>
+                            <th>Receipt #</th>
+                            <th>Patient</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Balance</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% recentReceipts.forEach(receipt => { %>
+                            <tr>
+                                <td><strong><%= receipt.id %></strong></td>
+                                <td><%= receipt.patient_name %></td>
+                                <td><%= new Date(receipt.created_at).toLocaleDateString('en-GB') %></td>
+                                <td>UGX <%= Number(receipt.total).toLocaleString('en-US') %></td>
+                                <td>
+                                    <span style="color: <%= Number(receipt.balance) > 0 ? '#dc3545' : '#28a745' %>; font-weight: bold;">
+                                        UGX <%= Number(receipt.balance).toLocaleString('en-US') %>
+                                    </span>
+                                </td>
+                                <td><a href="/receiptDetails/<%= receipt.id %>" style="color: #007bff; text-decoration: none;">View</a></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+                <a href="/receipts" class="view-all-link">View All Receipts →</a>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-state-icon">📄</div>
+                    <p>No receipts yet. <a href="/receipt" style="color: #007bff;">Create one now</a></p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>
+
+<%- include('partials/footer') %>

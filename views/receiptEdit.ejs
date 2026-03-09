@@ -1,4 +1,7 @@
 <form action="/receipts/edit/<%= receipt.id %>" method="POST">
+    <label for="receipt_number">Receipt Number:</label>
+    <input type="text" id="receipt_number" value="<%= receipt.id %>" readonly>
+
     <label for="patient_name">Patient Name:</label>
     <input type="text" id="patient_name" name="patient_name" value="<%= receipt.patient_name %>" required>
 
