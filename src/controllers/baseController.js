@@ -70,3 +70,16 @@ baseController.buildReceipt = async function (req, res, next) {
 }
 
 module.exports = baseController;
+
+// Render a blank page with logo (simple template)
+baseController.buildBlank = async function (req, res, next) {
+    try {
+        return res.render('blank_template', {
+            title: 'Blank',
+            user: req.user
+        });
+    } catch (error) {
+        logger.error(`Error in buildBlank: ${error.message}`, error);
+        next(error);
+    }
+}

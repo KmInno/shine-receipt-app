@@ -8,7 +8,9 @@
         <div class="dash-card">
             <div class="card-head">
                 <h3><i class="fa-solid fa-receipt fa-lg"></i> Receipts</h3>
-                <span class="stat"><%= receiptsCount %></span>
+                <span class="stat">
+                    <%= receiptsCount %>
+                </span>
             </div>
 
             <div class="card-body">
@@ -20,19 +22,23 @@
                 <% if (recentReceipts && recentReceipts.length) { %>
                     <ul class="recent-list">
                         <% recentReceipts.forEach(function(r){ %>
-                            <li><a href="/receipts/<%= r.id %>"><i class="fa-regular fa-circle-check"></i> <%= r.patient_name %> — <%= r.total %></a></li>
-                        <% }) %>
+                            <li><a href="/receipts/<%= r.id %>"><i class="fa-regular fa-circle-check"></i>
+                                    <%= r.patient_name %> — <%= r.total %>
+                                </a></li>
+                            <% }) %>
                     </ul>
-                <% } else { %>
-                    <p class="muted">No recent receipts</p>
-                <% } %>
+                    <% } else { %>
+                        <p class="muted">No recent receipts</p>
+                        <% } %>
             </div>
         </div>
 
         <div class="dash-card">
             <div class="card-head">
                 <h3><i class="fa-solid fa-file-invoice-dollar fa-lg"></i> Invoices</h3>
-                <span class="stat"><%= invoicesCount %></span>
+                <span class="stat">
+                    <%= invoicesCount %>
+                </span>
             </div>
 
             <div class="card-body">
@@ -44,13 +50,24 @@
                 <% if (recentInvoices && recentInvoices.length) { %>
                     <ul class="recent-list">
                         <% recentInvoices.forEach(function(i){ %>
-                            <li><a href="/invoices/<%= i.id %>"><i class="fa-regular fa-circle-check"></i> <%= i.client_name || i.invoice_number %> — <%= i.total %></a></li>
-                        <% }) %>
+                            <li><a href="/invoices/<%= i.id %>"><i class="fa-regular fa-circle-check"></i>
+                                    <%= i.client_name || i.invoice_number %> — <%= i.total %>
+                                </a></li>
+                            <% }) %>
                     </ul>
-                <% } else { %>
-                    <p class="muted">No recent invoices</p>
-                <% } %>
+                    <% } else { %>
+                        <p class="muted">No recent invoices</p>
+                        <% } %>
             </div>
+        </div>
+        <div class="dash-card">
+            <div class="card-head">
+                <h3><i class="fa-solid fa-file-invoice-dollar fa-lg"></i> Blank Page</h3>
+                <a href="/blank" class="btn btn-primary"><i class="fa-solid fa-plus-circle"></i> New</a>
+
+            </div>
+
+
         </div>
     </div>
 </section>

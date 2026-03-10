@@ -66,28 +66,6 @@
         float: right;
     }
 
-    .summary-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 18px;
-        align-items: flex-start;
-        margin-top: 10px;
-    }
-
-    .payment-info {
-        width: 320px;
-        border: 1px solid #000;
-        padding: 10px;
-        font-size: 13px;
-        background: rgba(255,255,255,0.95);
-        border-radius: 4px;
-    }
-
-    .payment-info .label {
-        font-weight: bold;
-        margin-top: 6px;
-    }
-
     .summary-box td {
         border: 1px solid black;
     }
@@ -164,7 +142,7 @@
                     <%= receipt.id %>
                 </span>
 
-                <span><strong>Patient Number:</strong> SDS/<%= receipt.id || '' %></span>
+                <span><strong>Patient Number:</strong> SDS/<%= new Date().getFullYear() %>/<%= receipt.id || '' %></span>
             </div>
 
 
@@ -244,24 +222,34 @@
         </table>
 
 
+        <br>
 
+        <div>
 
-            <table class="summary-box">
+            <strong>Amount Paind in Words:</strong>
 
-                <tr>
-                    <td><strong>Amount Paid</strong></td>
-                    <td style="text-align:right">UGX <%= Number(receipt.amount_paid || 0).toLocaleString('en-US') %>
-                    </td>
-                </tr>
+            <span id="amount-in-words"></span>
 
-                <tr>
-                    <td><strong>Balance</strong></td>
-                    <td style="text-align:right">UGX <%= Number(receipt.balance || 0).toLocaleString('en-US') %>
-                    </td>
-                </tr>
-
-            </table>
         </div>
+
+
+        <br>
+
+        <table class="summary-box">
+
+            <tr>
+                <td><strong>Amount Paid</strong></td>
+                <td style="text-align:right">UGX <%= Number(receipt.amount_paid || 0).toLocaleString('en-US') %>
+                </td>
+            </tr>
+
+            <tr>
+                <td><strong>Balance</strong></td>
+                <td style="text-align:right">UGX <%= Number(receipt.balance || 0).toLocaleString('en-US') %>
+                </td>
+            </tr>
+
+        </table>
         <br>
         <br>
         <br>
