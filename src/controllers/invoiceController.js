@@ -90,10 +90,27 @@ async function invoiceDetails(req, res, next) {
             return res.status(404).json({ message: "Invoice not found" });
         }
 
+        // Fetch servedBy (current logged-in user) from DB using id in token
+        let servedBy = null;
+        try {
+            const accountModel = require('../models/accounts-model');
+            if (req.user && req.user.id) {
+                const accountResp = await accountModel.getAccountById(req.user.id);
+                const rows = Array.isArray(accountResp) ? accountResp[0] : accountResp;
+                if (rows && rows.length > 0) {
+                    const acct = rows[0];
+                    servedBy = acct.name || acct.email || acct.username || null;
+                }
+            }
+        } catch (err) {
+            logger.error(`Error fetching user for servedBy: ${err.message}`, err);
+        }
+
         return res.render("invoiceDetails", {
             title: "Invoice Details",
             invoice: data,
-            user: req.user
+            user: req.user,
+            servedBy
         });
     } catch (error) {
         logger.error(`Error in invoiceDetails: ${error.message}`, error);

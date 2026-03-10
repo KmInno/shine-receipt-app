@@ -20,9 +20,22 @@
         margin-bottom: 10px;
     }
 
+    #amount-in-words {
+        font-style: italic;
+        display: inline;
+        margin-top: 5px;
+    }
+
     .patient-info span {
         display: block;
         font-size: 14px;
+    }
+
+    .fist-text {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+        margin-top: 20px;
     }
 
     table {
@@ -62,7 +75,8 @@
     }
 
     .thank {
-        margin-top: 20px;
+        margin-top: 60px;
+        font-style: italic;
         text-align: center;
     }
 
@@ -78,22 +92,33 @@
 
         body {
             margin: 0;
-            background-color: white;
+            /* background-color: white; */
         }
 
         .receipt {
-            /* height: 2480px; */
+            height: 750px;
             width: 100%;
             margin-top: 0;
             margin-bottom: 0;
+            background-image: url('/images/shinedental-water_mark.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 450px;
+
         }
 
         button {
             display: none;
         }
 
-        footer {
-            background-color: white;
+        p.copyright {
+            position: fixed;
+            font-style: italic;
+            color: #adaeaf;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
         }
 
     }
@@ -108,221 +133,230 @@
 
     <div class="patient-info">
 
-        <span><strong>Receipt Number:</strong>
-            <%= receipt.id %>
-        </span>
-
-        <span><strong>Patient Number:</strong> SDS/<%= receipt.id || '' %></span>
-
-        <span><strong>Patient Name:</strong>
-            <%= receipt.patient_name %>
-        </span>
-
-        <span><strong>Tel:</strong>
-            <%= receipt.patient_phone %>
-        </span>
-
-        <span><strong>Date:</strong>
-            <%= new Date(receipt.created_at).toLocaleDateString('en-GB') %>
-        </span>
-
-    </div>
+        <div class="fist-text">
 
 
-    <table>
 
-        <thead>
-            <tr>
-                <th>Service</th>
-                <th>Mode of Payment</th>
-                <th>Qty</th>
-                <th>Discount</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
+            <div class="text-right">
+                <span><strong>Receipt Number:</strong>
+                    <%= receipt.id %>
+                </span>
 
-        <tbody>
-
-            <% let services=[]; try{ if(typeof receipt.service==='string' ){ const parsed=JSON.parse(receipt.service);
-                services=Array.isArray(parsed) ? parsed : [parsed]; }else if(Array.isArray(receipt.service)){
-                services=receipt.service; }else if(receipt.service){ services=[receipt.service]; } }catch(e){
-                services=receipt.service ? [receipt.service] : []; } %>
+                <span><strong>Patient Number:</strong> SDS/<%= new Date().getFullYear() %>/<%= receipt.id || '' %></span>
+            </div>
 
 
-                <% services.forEach(function(item){ %>
+            <div class="text-left">
+                <span><strong>Patient Name:</strong>
+                    <%= receipt.patient_name %>
+                </span>
 
-                    <tr>
+                <span><strong>Tel:</strong>
+                    <%= receipt.patient_phone %>
+                </span>
 
-                        <td>
-                            <%= item.name || item.service || item %>
-                        </td>
+                <span><strong>Date:</strong>
+                    <%= new Date(receipt.created_at).toLocaleDateString('en-GB') %>
+                </span>
 
-                        <td>
-                            <%= receipt.mode_of_payment %>
-                        </td>
+            </div>
+        </div>
 
-                        <td>
-                            <%= item.qty || 1 %>
-                        </td>
+        <table>
 
-                        <td>UGX <%= item.discount || 0 %>
-                        </td>
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Mode of Payment</th>
+                    <th>Qty</th>
+                    <!-- <th>Discount</th> -->
+                    <th>Amount</th>
+                </tr>
+            </thead>
 
-                        <td>UGX <%= item.amount || receipt.total %>
-                        </td>
+            <tbody>
 
-                    </tr>
+                <% let services=[]; try { if (typeof receipt.service==='string' ) { const
+                    parsed=JSON.parse(receipt.service); services=Array.isArray(parsed) ? parsed : [parsed]; } else if
+                    (Array.isArray(receipt.service)) { services=receipt.service; } else if (receipt.service) {
+                    services=[receipt.service]; } } catch (e) { services=receipt.service ? [receipt.service] : []; } %>
 
-                    <% }) %>
 
+                    <% services.forEach(function(item){ %>
 
-                        <tr class="total-row">
+                        <tr>
 
-                            <td colspan="4" style="text-align:right">Total Amount</td>
+                            <td>
+                                <%= item.name || item.service || item %>
+                            </td>
 
-                            <td>UGX <%= receipt.total || receipt.total_amount %>
+                            <td>
+                                <%= receipt.mode_of_payment %>
+                            </td>
+
+                            <td>
+                                <%= item.qty || 1 %>
+                            </td>
+
+                            <!-- <td>UGX <%= item.discount || 0 %></td> -->
+
+                            <td>UGX <%= item.amount || receipt.total %>
                             </td>
 
                         </tr>
 
-        </tbody>
-
-    </table>
+                        <% }) %>
 
 
-    <br>
+                            <tr class="total-row">
 
-    <div>
+                                <td colspan="3" style="text-align:right">Total Amount</td>
 
-        <strong>Total Amount in Words:</strong>
+                                <td>UGX <%= receipt.total || receipt.total_amount %>
+                                </td>
 
-        <span id="amount-in-words"></span>
+                            </tr>
+
+            </tbody>
+
+        </table>
+
+
+        <br>
+
+        <div>
+
+            <strong>Amount Paind in Words:</strong>
+
+            <span id="amount-in-words"></span>
+
+        </div>
+
+
+        <br>
+
+        <table class="summary-box">
+
+            <tr>
+                <td><strong>Amount Paid</strong></td>
+                <td style="text-align:right">UGX <%= Number(receipt.amount_paid || 0).toLocaleString('en-US') %>
+                </td>
+            </tr>
+
+            <tr>
+                <td><strong>Balance</strong></td>
+                <td style="text-align:right">UGX <%= Number(receipt.balance || 0).toLocaleString('en-US') %>
+                </td>
+            </tr>
+
+        </table>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="footer">
+
+            <p><strong>Served By:</strong>
+                <%= servedBy || (user && (user.name || user.email || user.username)) || '_________' %>
+            </p>
+        </div>
+
+
+        <div class="thank">
+
+            Thank you for choosing Shine Dental Surgery
+
+
+            <p class="copyright">© Shine Dental Surgery <%= new Date().getFullYear() %></p>
+
+        </div>
+
+        <div class="water-mark">
+            <!-- watermark area - footer printed below -->
+        </div>
 
     </div>
 
-
-    <br>
-
-    <table class="summary-box">
-
-        <tr>
-            <td><strong>Amount Paid</strong></td>
-            <td style="text-align:right">UGX <%= Number(receipt.amount_paid || 0).toLocaleString('en-US') %>
-            </td>
-        </tr>
-
-        <tr>
-            <td><strong>Balance</strong></td>
-            <td style="text-align:right">UGX <%= Number(receipt.balance || 0).toLocaleString('en-US') %>
-            </td>
-        </tr>
-
-    </table>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-
-    <div class="footer">
-
-        <p><strong>Served By:</strong>
-            <%= user.name || user.email %>
-        </p>
+    <div class="buttons">
+        <button onclick="window.print()">Print</button>
+        <a href="/receipts"><button>Back</button></a>
     </div>
 
 
-    <div class="thank">
-
-        Thank you for choosing Shine Dental Surgery
-
-    </div>
-
-    <div class="water-mark">
-     <%- include('partials/footer') %>
-    </div>
-
-</div>
-
-<div class="buttons">
-    <button onclick="window.print()">Print</button>
-    <a href="/receipts"><button>Back</button></a>
-</div>
 
 
 
+    <script>
 
+        function numberToWords(num) {
 
-<script>
+            const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
 
-    function numberToWords(num) {
+            const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
 
-        const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+            function convert(n) {
 
-        const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+                if (n < 20) return a[n];
 
-        function convert(n) {
+                if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? '-' + a[n % 10] : '');
 
-            if (n < 20) return a[n];
+                if (n < 1000) return a[Math.floor(n / 100)] + ' hundred ' + convert(n % 100);
 
-            if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? '-' + a[n % 10] : '');
+                if (n < 1000000) return convert(Math.floor(n / 1000)) + ' thousand ' + convert(n % 1000);
 
-            if (n < 1000) return a[Math.floor(n / 100)] + ' hundred ' + convert(n % 100);
+                return '';
+            }
 
-            if (n < 1000000) return convert(Math.floor(n / 1000)) + ' thousand ' + convert(n % 1000);
-
-            return '';
+            return convert(num);
         }
 
-        return convert(num);
-    }
+        const totalAmount = Math.round(Number(<%= receipt.amount_paid || receipt.amount_paid || 0 %>) || 0);
 
-    const totalAmount = Math.round(Number(<%= receipt.total || receipt.total_amount || 0 %>) || 0);
+        function numberToWordsFull(num) {
+            if (num === 0) return 'zero';
+            const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+            const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+            const scales = ['', 'thousand', 'million', 'billion', 'trillion'];
 
-    function numberToWordsFull(num) {
-        if (num === 0) return 'zero';
-        const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-        const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-        const scales = ['', 'thousand', 'million', 'billion', 'trillion'];
-
-        function chunkToWords(n) {
-            let str = '';
-            if (n >= 100) {
-                str += a[Math.floor(n / 100)] + ' hundred';
-                n = n % 100;
-                if (n) str += ' and ';
+            function chunkToWords(n) {
+                let str = '';
+                if (n >= 100) {
+                    str += a[Math.floor(n / 100)] + ' hundred';
+                    n = n % 100;
+                    if (n) str += ' and ';
+                }
+                if (n >= 20) {
+                    str += b[Math.floor(n / 10)];
+                    if (n % 10) str += '-' + a[n % 10];
+                } else if (n > 0) {
+                    str += a[n];
+                }
+                return str;
             }
-            if (n >= 20) {
-                str += b[Math.floor(n / 10)];
-                if (n % 10) str += '-' + a[n % 10];
-            } else if (n > 0) {
-                str += a[n];
+
+            let words = [];
+            let scale = 0;
+            let n = num;
+
+            while (n > 0) {
+                const chunk = n % 1000;
+                if (chunk) {
+                    const chunkWords = chunkToWords(chunk) + (scales[scale] ? ' ' + scales[scale] : '');
+                    words.unshift(chunkWords.trim());
+                }
+                n = Math.floor(n / 1000);
+                scale++;
             }
-            return str;
+
+            return words.join(', ').replace(/, (?=[^,]*$)/, ' and ');
         }
 
-        let words = [];
-        let scale = 0;
-        let n = num;
+        const words = numberToWordsFull(totalAmount);
+        document.getElementById('amount-in-words').innerText = words.charAt(0).toUpperCase() + words.slice(1) + ' shillings';
 
-        while (n > 0) {
-            const chunk = n % 1000;
-            if (chunk) {
-                const chunkWords = chunkToWords(chunk) + (scales[scale] ? ' ' + scales[scale] : '');
-                words.unshift(chunkWords.trim());
-            }
-            n = Math.floor(n / 1000);
-            scale++;
-        }
+    </script>
 
-        return words.join(', ').replace(/, (?=[^,]*$)/, ' and ');
-    }
-
-    const words = numberToWordsFull(totalAmount);
-    document.getElementById('amount-in-words').innerText = words.charAt(0).toUpperCase() + words.slice(1) + ' shillings';
-
-</script>
-
-<%- include('partials/footer') %>

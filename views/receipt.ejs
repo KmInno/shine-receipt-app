@@ -89,7 +89,7 @@ input,select,button{
 <th>Service</th>
 <th>Unit Price</th>
 <th>Qty</th>
-<th>Discount</th>
+<!-- <th>Discount</th> -->
 <th>Amount</th>
 <th>Remove</th>
 </tr>
@@ -146,7 +146,7 @@ row.innerHTML = `
 <td><input type="number" class="price" value="0"></td>
 <td><input type="number" class="qty" value="1"></td>
 
-<td><input type="number" class="discount" value="0"></td>
+<!-- <td><input type="number" class="discount" value="0"></td> -->
 
 <td><input type="number" class="amount" value="0" readonly></td>
 
@@ -173,9 +173,8 @@ document.querySelectorAll("#servicesContainer tr").forEach(row => {
 
 const price = parseFloat(row.querySelector(".price").value) || 0;
 const qty = parseFloat(row.querySelector(".qty").value) || 1;
-const discount = parseFloat(row.querySelector(".discount").value) || 0;
 
-const amount = (price * qty) - discount;
+const amount = (price * qty);
 row.querySelector(".amount").value = amount;
 
 total += amount;
@@ -215,8 +214,6 @@ services.push({
 name: row.querySelector(".service-name").value,
 
 qty: row.querySelector(".qty").value,
-
-discount: row.querySelector(".discount").value,
 
 amount: row.querySelector(".amount").value
 

@@ -9,6 +9,20 @@ baseController.buildHome = async function (req, res, next) {
         const receipts = await ReceiptModel.getReceipts();
         const invoices = await InvoiceModel.getInvoices();
 
+        // If user is not an admin, show a simplified dashboard
+        if (req.user && req.user.usertype && req.user.usertype !== 'admin') {
+            const recentReceipts = receipts.slice(-5).reverse();
+            const recentInvoices = invoices.slice(-5).reverse();
+            return res.render("simpleDashboard", {
+                title: "Dashboard",
+                user: req.user,
+                recentReceipts,
+                recentInvoices,
+                receiptsCount: receipts.length,
+                invoicesCount: invoices.length
+            });
+        }
+
         // Calculate stats
         const totalReceipts = receipts.length;
         const totalInvoices = invoices.length;
@@ -56,3 +70,16 @@ baseController.buildReceipt = async function (req, res, next) {
 }
 
 module.exports = baseController;
+
+// Render a blank page with logo (simple template)
+baseController.buildBlank = async function (req, res, next) {
+    try {
+        return res.render('blank_template', {
+            title: 'Blank',
+            user: req.user
+        });
+    } catch (error) {
+        logger.error(`Error in buildBlank: ${error.message}`, error);
+        next(error);
+    }
+}

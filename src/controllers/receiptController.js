@@ -1,10 +1,11 @@
 const ReceiptItem = require("../models/receiptModel");
+const accountModel = require("../models/accounts-model");
 const logger = require("../utils/logger"); // Add a logger utility
 
 async function addReceipt(req, res) {
     try {
-        const { patient_name, patient_phone, service, qty, discount, amount, total, mode_of_payment, amount_paid, balance } = req.body;
-        const receipt = await ReceiptItem.createReceipt(patient_name, patient_phone, service, qty || 1, discount || 0, amount || total || 0, total || 0, mode_of_payment, amount_paid || 0, balance || 0);
+        const { patient_name, patient_phone, service, qty, amount, total, mode_of_payment, amount_paid, balance } = req.body;
+        const receipt = await ReceiptItem.createReceipt(patient_name, patient_phone, service, qty || 1, amount || total || 0, total || 0, mode_of_payment, amount_paid || 0, balance || 0);
 
         if (receipt) {
             const data = await ReceiptItem.getReceipts();
@@ -115,10 +116,30 @@ async function receiptDetails(req, res, next) {
             data.service = data.service ? [data.service] : [];
         }
 
+        // Log current signed-in user for debugging
+        console.log('Current user:', req.user);
+
+        // Fetch full user record from DB using id from token, so we can show served-by name
+        let servedBy = null;
+        try {
+            if (req.user && req.user.id) {
+                const accountResp = await accountModel.getAccountById(req.user.id);
+                // accountResp is the [rows, fields] result from mysql2; rows is at index 0
+                const rows = Array.isArray(accountResp) ? accountResp[0] : accountResp;
+                if (rows && rows.length > 0) {
+                    const acct = rows[0];
+                    servedBy = acct.name || acct.email || acct.username || null;
+                }
+            }
+        } catch (err) {
+            logger.error(`Error fetching user for servedBy: ${err.message}`, err);
+        }
+
         return res.render("receiptDetails", {
             title: "Receipt Details",
             receipt: data,
-            user: req.user
+            user: req.user,
+            servedBy
         });
     } catch (error) {
         logger.error(`Error in receiptDetails: ${error.message}`, error);
@@ -129,7 +150,7 @@ async function receiptDetails(req, res, next) {
 async function updateReceipt(req, res) {
     try {
         const receipt_id = req.params.receipt_id;
-        const { patient_name, patient_phone, service, qty, discount, amount, total, mode_of_payment, amount_paid, balance } = req.body;
+        const { patient_name, patient_phone, service, qty, amount, total, mode_of_payment, amount_paid, balance } = req.body;
 
         // Fetch the receipt details to pre-fill the form
         const receipt = await ReceiptItem.getReceiptDetails(receipt_id);
@@ -144,7 +165,6 @@ async function updateReceipt(req, res) {
             patient_phone,
             service,
             qty || 1,
-            discount || 0,
             amount || total || 0,
             total || 0,
             mode_of_payment,
