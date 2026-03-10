@@ -9,6 +9,11 @@ ALTER TABLE receipts
   ADD COLUMN amount DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER discount;
 --   ADD COLUMN amount_paid DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER mode_of_payment;
 
+
+ALTER TABLE expenses
+DROP COLUMN description;
+DROP COLUMN description;
+
 CREATE TABLE receipts (
 
 id INT AUTO_INCREMENT PRIMARY KEY,

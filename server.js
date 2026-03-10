@@ -13,6 +13,8 @@ const session = require("express-session");
 const cookieParser = require('cookie-parser');
 const accountRoutes = require('./src/routes/account-route');
 const baseRoutes = require('./src/routes/baseroute');
+const expensesRoutes = require('./src/routes/expensesRoutes');
+const salesReportRoutes = require('./src/routes/salesReportRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -69,6 +71,12 @@ app.use("/receiptDetails", require("./src/routes/receiptRoutes"));
 
 // Invoice routes
 app.use("/invoices", invoiceRoutes);
+
+// Expenses routes
+app.use("/expenses", expensesRoutes);
+
+// Sales Report routes
+app.use("/sales-report", salesReportRoutes);
 
 // login routes
 app.use("/account", accountRoutes);

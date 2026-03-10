@@ -2,7 +2,15 @@ const User = require("../models/accounts-model");
 
 async function adminMiddleware(req, res, next) {
     try {
-        // Allow admin to delete and edit data without JWT token validation
+        // Check if user is authenticated and is an admin
+        if (!req.user) {
+            return res.status(401).json({ message: "Authentication required." });
+        }
+        
+        if (req.user.usertype !== 'admin') {
+            return res.status(403).json({ message: "Admin access required." });
+        }
+        
         next();
     } catch (error) {
         console.error("Error in adminMiddleware:", error);

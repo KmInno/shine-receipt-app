@@ -315,6 +315,38 @@
 
         <!-- Statistics Grid -->
         <div class="dashboard-grid">
+            <!-- Today's Sales -->
+            <div class="stat-card receipts">
+                <div class="stat-icon"><i class="fas fa-coins"></i></div>
+                <div class="stat-label">Today's Sales</div>
+                <div class="stat-value">UGX <%= Number(dailySales || 0).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) %></div>
+                <div class="stat-subtext">Daily revenue</div>
+            </div>
+
+            <!-- Today's Expenses -->
+            <div class="stat-card invoices">
+                <div class="stat-icon"><i class="fas fa-arrow-down"></i></div>
+                <div class="stat-label">Today's Expenses</div>
+                <div class="stat-value">UGX <%= Number(dailyExpenses || 0).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) %></div>
+                <div class="stat-subtext">Daily spending</div>
+            </div>
+
+            <!-- Net Balance -->
+            <div class="stat-card balance">
+                <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                <div class="stat-label">Net Balance Today</div>
+                <div class="stat-value">UGX <%= Number((dailySales || 0) - (dailyExpenses || 0)).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) %></div>
+                <div class="stat-subtext">Sales minus expenses</div>
+            </div>
+
+            <!-- Outstanding Payments -->
+            <div class="stat-card status">
+                <div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+                <div class="stat-label">Outstanding Today</div>
+                <div class="stat-value">UGX <%= Number(outstandingAmount || 0).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) %></div>
+                <div class="stat-subtext"><%= paidSalesCount %> fully paid transactions</div>
+            </div>
+
             <div class="stat-card">
                 <div class="stat-label">Total Receipts</div>
                 <div class="stat-value"><%= stats.totalReceipts %></div>

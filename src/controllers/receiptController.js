@@ -5,7 +5,9 @@ const logger = require("../utils/logger"); // Add a logger utility
 async function addReceipt(req, res) {
     try {
         const { patient_name, patient_phone, service, qty, amount, total, mode_of_payment, amount_paid, balance } = req.body;
-        const receipt = await ReceiptItem.createReceipt(patient_name, patient_phone, service, qty || 1, amount || total || 0, total || 0, mode_of_payment, amount_paid || 0, balance || 0);
+        const finalAmountPaid = amount_paid || total || 0;
+        const finalBalance = balance !== undefined ? balance : (total || 0) - finalAmountPaid;
+        const receipt = await ReceiptItem.createReceipt(patient_name, patient_phone, service, qty || 1, amount || total || 0, total || 0, mode_of_payment, finalAmountPaid, finalBalance);
 
         if (receipt) {
             const data = await ReceiptItem.getReceipts();
@@ -144,8 +146,8 @@ async function updateReceipt(req, res) {
             amount || total || 0,
             total || 0,
             mode_of_payment,
-            amount_paid || 0,
-            balance || 0
+            amount_paid || total || 0,
+            balance !== undefined ? balance : (total || 0) - (amount_paid || total || 0)
         );
 
         if (updated) {

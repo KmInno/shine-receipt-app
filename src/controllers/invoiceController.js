@@ -141,9 +141,11 @@ async function updateInvoice(req, res) {
         );
 
         if (updated) {
-            res.status(200).render("invoiceEdit", {
+            const allInvoices = await InvoiceModel.getInvoices();
+            res.status(200).render("invoices", {
+                title: "Invoices",
                 message: "Invoice updated successfully",
-                invoice,
+                invoices: allInvoices,
                 user: req.user
             });
         } else {
