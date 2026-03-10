@@ -2,10 +2,10 @@
 -- Run these statements in your MySQL database (adjust types/names as needed)
 
 ALTER TABLE receipts
---   ADD COLUMN patient_id INT NOT NULL AUTO_INCREMENT UNIQUE AFTER id;
---   ADD COLUMN receipt_name VARCHAR(255) NULL AFTER patient_id,
---   ADD COLUMN qty INT NOT NULL DEFAULT 1 AFTER service;
---   ADD COLUMN discount DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER qty;
+  ADD COLUMN patient_id INT NOT NULL AUTO_INCREMENT UNIQUE AFTER id;
+  ADD COLUMN receipt_name VARCHAR(255) NULL AFTER patient_id,
+  ADD COLUMN qty INT NOT NULL DEFAULT 1 AFTER service;
+  ADD COLUMN discount DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER qty;
   ADD COLUMN amount DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER discount;
 --   ADD COLUMN amount_paid DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER mode_of_payment;
 

@@ -48,10 +48,25 @@ async function deleteReciept(req, res) {
 
 async function getAllReceipts(req, res, next) {
     try {
+        // Guard: prevent rendering if headers already sent
+        if (res.headersSent) {
+            logger.warn('getAllReceipts: headers already sent, skipping render');
+            return;
+        }
+
         const data = await ReceiptItem.getReceipts();
         data.forEach(receipt => {
             if (typeof receipt.service === "string") {
-                receipt.service = JSON.parse(receipt.service).join(", ");
+                try {
+                    receipt.service = JSON.parse(receipt.service);
+                } catch (e) {
+                    logger.warn(`Failed to parse service for receipt ${receipt.id || receipt.receipt_id}: ${e.message}`);
+                    receipt.service = [];
+                }
+            }
+            // Ensure service is an array
+            if (!Array.isArray(receipt.service)) {
+                receipt.service = receipt.service ? [receipt.service] : [];
             }
 
             // Format phone numbers to replace '0' with '256'
@@ -89,7 +104,16 @@ async function receiptDetails(req, res, next) {
         }
 
         if (typeof data.service === "string") {
-            data.service = JSON.parse(data.service).join(", ");
+            try {
+                data.service = JSON.parse(data.service);
+            } catch (e) {
+                logger.warn(`Failed to parse service for receipt ${receipt_id}: ${e.message}`);
+                data.service = [];
+            }
+        }
+        // Ensure service is an array
+        if (!Array.isArray(data.service)) {
+            data.service = data.service ? [data.service] : [];
         }
 
         // Log current signed-in user for debugging
@@ -149,11 +173,48 @@ async function updateReceipt(req, res) {
         );
 
         if (updated) {
-            res.status(200).render("receiptEdit", {
-                message: "Receipt updated successfully",
-                receipt, // Pass the receipt object to the view
-                user: req.user
-            });
+                // Guard: prevent rendering if headers already sent
+                if (res.headersSent) {
+                    logger.warn('updateReceipt: headers already sent, skipping render');
+                    return;
+                }
+                
+                // After successful update, fetch the receipts list and render it
+                const data = await ReceiptItem.getReceipts();
+                // Normalize the service field (stored as JSON string) for display
+                data.forEach(r => {
+                    if (typeof r.service === "string") {
+                        try {
+                            r.service = JSON.parse(r.service);
+                        } catch (e) {
+                            logger.warn(`Failed to parse service for receipt ${r.receipt_id}: ${e.message}`);
+                            r.service = [];
+                        }
+                    }
+                    // Ensure service is an array
+                    if (!Array.isArray(r.service)) {
+                        r.service = r.service ? [r.service] : [];
+                    }
+                });
+
+                // Render admin view for admins, otherwise render normal receipts view
+                if (req.user && req.user.usertype === 'admin') {
+                    return res.status(200).render("adminReceipts", {
+                        title: "Admin Receipts",
+                        receipts: data,
+                        message: "Receipt updated successfully",
+                        updatedReceipt: receipt,
+                        user: req.user
+                    });
+                }
+
+                return res.status(200).render("receipts", {
+                    title: "Receipts List",
+                    receipts: data,
+                    message: "Receipt updated successfully",
+                    updatedReceipt: receipt,
+                    user: req.user
+                });
         } else {
             logger.warn(`Receipt with ID ${receipt_id} not updated`);
             res.status(404).json({ message: "Receipt not updated" });

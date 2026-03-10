@@ -1,143 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %>
-    </title>
-    <link rel="stylesheet" href="/styles.css">
-    <style>
-        .hidden {
-            display: none;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="table">
-
-
-        <div class="table-specs">
-
-
-            <h2>
-                <%= title %>
-            </h2>
-            <input type="text" id="filter" placeholder="Search Patient.... ">
-
-            <a href="/receipt"
-                style="margin-bottom: 15px; padding: 10px 20px; background-color: #589f14; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">+
-                New Receipt</a>
-            <table>
-                <thead>
-                        <tr>
-                        <th>Receipt ID</th>
-                        <th>Patient ID</th>
-                        <th>Date</th>
-                        <th>Patient Name</th>
-                        <th>Phone Number</th>
-                        <th>Services</th>
-                        <th>Total</th>
-                        <th>Mode of Payment</th>
-                        <th>Amount Paid</th>
-                        <th>Balance</th>
-                        <th>Action</th> <!-- Add this line -->
-                    </tr>
-                </thead>
-                <tbody>
-                    <% receipts.forEach(receipt=> { %>
-                        <tr class="item-list">
-                            <td>
-                                <%= receipt.id %>
-                            </td>
-                            <td>
-                                SDS/<%= receipt.id %>
-                            </td>
-                            <td>
-                                <%= new Date(receipt.created_at).toLocaleDateString('en-GB') %>
-                            </td>
-                            <td class="names"> <a href="/receiptDetails/<%= receipt.id %>?patient_id=<%= receipt.id %>">
-                                    <%= receipt.patient_name %>
-                                </a> </td>
-                            <td>
-                                <a href="https://wa.me/<%= receipt.patient_phone.replace(/\D/g, '') %>?text=Hello%20<%= encodeURIComponent(receipt.patient_name) %>,%20your%20balance%20is%20<%= encodeURIComponent(receipt.balance) %>."
-                                    target="_blank" style="color: #25D366; text-decoration: none;"
-                                    title="Send WhatsApp message">
-                                    <%= receipt.patient_phone %>
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                                            alt="WhatsApp" style="height:16px;vertical-align:middle;margin-left:4px;">
-                                </a>
-                            </td>
-                            <td>
-                                <% 
-                                    let servicesText = '';
-                                    if (Array.isArray(receipt.service)) {
-                                        servicesText = receipt.service.map(s => {
-                                            if (s && typeof s === 'object') return s.name || s.service || JSON.stringify(s);
-                                            return String(s);
-                                        }).join(', ');
-                                    } else {
-                                        servicesText = receipt.service;
-                                    }
-                                %>
-                                <%= servicesText %>
-                            </td>
-                        <td><span style=" color: <%=Number(receipt.total)> 0 ? '#000000' : '#000000' %>; font-weight:
-                                    bold;">
-                                    <%= Number(receipt.total).toLocaleString('en-US') %>
-                                        </span></td>
+        <h2><%= title %></h2>
+        <input type="text" id="filter" placeholder="Search Patient.... ">
+        <a href="/receipt" style="margin-bottom: 15px; padding: 10px 20px; background-color: #589f14; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">+ New Receipt</a>
+        <table>
+            <thead>
+                <tr>
+                    <th>Receipt ID</th>
+                    <th>Patient ID</th>
+                    <th>Date</th>
+                    <th>Patient Name</th>
+                    <th>Phone Number</th>
+                    <th>Services</th>
+                    <th>Total</th>
+                    <th>Mode of Payment</th>
+                    <th>Amount Paid</th>
+                    <th>Balance</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% receipts.forEach(receipt => { %>
+                    <tr class="item-list">
+                        <td><%= receipt.id %></td>
+                        <td>SDS/<%= receipt.id %></td>
+                        <td><%= new Date(receipt.created_at).toLocaleDateString('en-GB') %></td>
+                        <td class="names">
+                            <a href="/receiptDetails/<%= receipt.id %>?patient_id=<%= receipt.id %>"><%= receipt.patient_name %></a>
+                        </td>
+                        <td>
+                            <%
+                                const rawPhone = receipt.patient_phone || '';
+                                let digits = rawPhone.replace(/\D/g, '');
+                                if (digits.startsWith('0')) {
+                                    digits = '256' + digits.slice(1);
+                                }
+                                const displayPhone = digits ? '+' + digits : rawPhone;
+                            %>
+                            <a href="https://wa.me/<%= digits %>?text=<%= encodeURIComponent('Hello ' + receipt.patient_name + ' welcome to Shine Dental Surgery (Mengo). Thank you for choosing us.') %>" target="_blank" style="color: #25D366; text-decoration: none;" title="Send WhatsApp message">
+                                <%= displayPhone %>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="height:16px;vertical-align:middle;margin-left:4px;">
+                            </a>
+                        </td>
+                        <td>
+                            <% 
+                                let servicesText = '';
+                                if (Array.isArray(receipt.service)) {
+                                    servicesText = receipt.service.map(s => {
+                                        if (s && typeof s === 'object') return s.name || s.service || JSON.stringify(s);
+                                        return String(s);
+                                    }).join(', ');
+                                } else {
+                                    servicesText = receipt.service;
+                                }
+                            %>
+                            <%= servicesText %>
+                        </td>
+                        <td><%= Number(receipt.total).toLocaleString('en-US') %></td>
                         <td><%= receipt.mode_of_payment %></td>
-                        <td><span style=" color: <%=Number(receipt.amount_paid)> 0 ? '#000000' : '#00000' %>; font-weight:
-                                    bold;">
-                                    UGX<%= Number(receipt.amount_paid).toLocaleString('en-US') %>
-                                        </span></td>
-                        <td><span style=" color: <%=Number(receipt.balance)> 0 ? '#dc3545' : '#28a745' %>; font-weight:
-                                    bold;">
-                                    UGX <%= Number(receipt.balance).toLocaleString('en-US') %>
-                                        </span>
-                            </td>
-                            <td>
-                                <% if (user && user.usertype==='admin' ) { %>
-                                    <button onclick="deleteReceipt('<%= receipt.id %>')"
-                                        style="color: white;">Delete</button>
-                                    <% } %>
-                            </td>
-                        </tr>
-                        <% }) %>
-                </tbody>
-            </table>
-        </div>
+                        <td>UGX<%= Number(receipt.amount_paid).toLocaleString('en-US') %></td>
+                        <td>UGX<%= Number(receipt.balance).toLocaleString('en-US') %></td>
+                        <td>
+                            <% if (user && user.usertype === 'admin') { %>
+                                <button onclick="deleteReceipt('<%= receipt.id %>')" style="color: white;">Delete</button>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
     </div>
     <script>
-        document.getElementById('filter').addEventListener('input', function () {
+        document.getElementById('filter').addEventListener('input', function() {
             const filterValue = this.value.toLowerCase();
-            const rows = document.querySelectorAll("tbody tr");
+            const rows = document.querySelectorAll('.item-list');
 
             rows.forEach(row => {
-                const cells = row.querySelectorAll("td");
+                const cells = row.querySelectorAll('td');
                 let match = false;
                 cells.forEach(cell => {
                     if (cell.textContent.toLowerCase().includes(filterValue)) {
                         match = true;
                     }
                 });
-                row.style.display = match ? "" : "none";
+                row.style.display = match ? '' : 'none';
             });
         });
-
-        function formatPhoneNumber(phoneNumber) {
-            // Check if the number starts with '0' and replace it with '256'
-            if (phoneNumber.startsWith('0')) {
-                return '+256' + phoneNumber.slice(1);
-            }
-            return phoneNumber;
-        }
 
         async function deleteReceipt(receiptId) {
             if (confirm("Are you sure you want to delete this receipt?")) {
                 try {
+                    const response = await fetch(`/receipts/delete/${receiptId}`, { method: 'DELETE' });
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert(result.message);
+                        location.reload();
+                    } else {
+                        alert(result.message || "Error deleting receipt");
+                    }
+                } catch (error) {
+                    alert("Error deleting receipt");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
                     const response = await fetch(`/receipts/delete/${receiptId}`, {
                         method: 'DELETE'
                     });

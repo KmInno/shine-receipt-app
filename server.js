@@ -15,6 +15,9 @@ const accountRoutes = require('./src/routes/account-route');
 const baseRoutes = require('./src/routes/baseroute');
 require('dotenv').config();
 
+// logging utility
+const logger = require('./src/utils/logger');
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -56,6 +59,39 @@ app.set("layout", "./layouts/layout");
 
 // Routes
 app.use(static);
+
+// Middleware to prevent multiple response sends
+app.use((req, res, next) => {
+    const originalRender = res.render;
+    const originalSend = res.send;
+    const originalJson = res.json;
+    
+    res.render = function(...args) {
+        if (res.headersSent) {
+            logger.warn(`Attempt to render after headers already sent on ${req.method} ${req.path}`);
+            return;
+        }
+        return originalRender.apply(res, args);
+    };
+    
+    res.send = function(...args) {
+        if (res.headersSent) {
+            logger.warn(`Attempt to send after headers already sent on ${req.method} ${req.path}`);
+            return;
+        }
+        return originalSend.apply(res, args);
+    };
+    
+    res.json = function(...args) {
+        if (res.headersSent) {
+            logger.warn(`Attempt to json after headers already sent on ${req.method} ${req.path}`);
+            return;
+        }
+        return originalJson.apply(res, args);
+    };
+    
+    next();
+});
 
 // Serve views folder
 app.use("/", baseRoutes);
