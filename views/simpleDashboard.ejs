@@ -1,0 +1,56 @@
+<section class="dashboard-simple">
+    <div class="dashboard-header">
+        <h1><i class="fa-solid fa-gauge-high"></i> Welcome</h1>
+        <p class="lead">Quick access to receipts and invoices — create and view what you need.</p>
+    </div>
+
+    <div class="dash-grid">
+        <div class="dash-card">
+            <div class="card-head">
+                <h3><i class="fa-solid fa-receipt fa-lg"></i> Receipts</h3>
+                <span class="stat"><%= receiptsCount %></span>
+            </div>
+
+            <div class="card-body">
+                <div class="card-actions">
+                    <a href="/receipts" class="btn btn-outline"><i class="fa-solid fa-list"></i> View</a>
+                    <a href="/receipt" class="btn btn-primary"><i class="fa-solid fa-plus-circle"></i> New</a>
+                </div>
+
+                <% if (recentReceipts && recentReceipts.length) { %>
+                    <ul class="recent-list">
+                        <% recentReceipts.forEach(function(r){ %>
+                            <li><a href="/receipts/<%= r.id %>"><i class="fa-regular fa-circle-check"></i> <%= r.patient_name %> — <%= r.total %></a></li>
+                        <% }) %>
+                    </ul>
+                <% } else { %>
+                    <p class="muted">No recent receipts</p>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="dash-card">
+            <div class="card-head">
+                <h3><i class="fa-solid fa-file-invoice-dollar fa-lg"></i> Invoices</h3>
+                <span class="stat"><%= invoicesCount %></span>
+            </div>
+
+            <div class="card-body">
+                <div class="card-actions">
+                    <a href="/invoices" class="btn btn-outline"><i class="fa-solid fa-list"></i> View</a>
+                    <a href="/invoices/new" class="btn btn-primary"><i class="fa-solid fa-plus-circle"></i> New</a>
+                </div>
+
+                <% if (recentInvoices && recentInvoices.length) { %>
+                    <ul class="recent-list">
+                        <% recentInvoices.forEach(function(i){ %>
+                            <li><a href="/invoices/<%= i.id %>"><i class="fa-regular fa-circle-check"></i> <%= i.client_name || i.invoice_number %> — <%= i.total %></a></li>
+                        <% }) %>
+                    </ul>
+                <% } else { %>
+                    <p class="muted">No recent invoices</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
