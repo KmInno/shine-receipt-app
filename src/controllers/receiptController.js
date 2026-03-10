@@ -3,22 +3,27 @@ const logger = require("../utils/logger"); // Add a logger utility
 
 async function addReceipt(req, res) {
     try {
-        const { patient_name, patient_phone, service, total, mode_of_payment, amount_paid, balance } = req.body;
-        const receipt = await ReceiptItem.createReceipt(patient_name, patient_phone, service, total, mode_of_payment, amount_paid, balance);
+        const { patient_name, patient_phone, service, qty, discount, amount, total, mode_of_payment, amount_paid, balance } = req.body;
+        const receipt = await ReceiptItem.createReceipt(patient_name, patient_phone, service, qty || 1, discount || 0, amount || total || 0, total || 0, mode_of_payment, amount_paid || 0, balance || 0);
 
         if (receipt) {
             const data = await ReceiptItem.getReceipts();
             res.status(201).render("receipts", {
                 title: "Receipts",
-                receipts: data
+                receipts: data,
+                user: req.user
             });
         } else {
             logger.error("Failed to add receipt: Database operation returned null");
-            res.status(500).json({ message: "Error adding receipt" });
+            if (!res.headersSent) {
+                return res.status(500).json({ message: "Error adding receipt" });
+            }
         }
     } catch (error) {
         logger.error(`Error in addReceipt: ${error.message}`, error);
-        res.status(500).json({ message: "Internal server error" });
+        if (!res.headersSent) {
+            res.status(500).json({ message: "Internal server error" });
+        }
     }
 }
 
@@ -34,7 +39,9 @@ async function deleteReciept(req, res) {
         }
     } catch (error) {
         logger.error(`Error in deleteReciept: ${error.message}`, error);
-        res.status(500).json({ message: "Error deleting receipt" });
+        if (!res.headersSent) {
+            res.status(500).json({ message: "Error deleting receipt" });
+        }
     }
 }
 
@@ -49,7 +56,21 @@ async function getAllReceipts(req, res, next) {
         const data = await ReceiptItem.getReceipts();
         data.forEach(receipt => {
             if (typeof receipt.service === "string") {
-                receipt.service = JSON.parse(receipt.service).join(", ");
+                try {
+                    receipt.service = JSON.parse(receipt.service);
+                } catch (e) {
+                    logger.warn(`Failed to parse service for receipt ${receipt.id || receipt.receipt_id}: ${e.message}`);
+                    receipt.service = [];
+                }
+            }
+            // Ensure service is an array
+            if (!Array.isArray(receipt.service)) {
+                receipt.service = receipt.service ? [receipt.service] : [];
+            }
+
+            // Format phone numbers to replace '0' with '256'
+            if (receipt.patient_phone.startsWith('0')) {
+                receipt.patient_phone = '256' + receipt.patient_phone.slice(1);
             }
         });
 
@@ -82,7 +103,16 @@ async function receiptDetails(req, res, next) {
         }
 
         if (typeof data.service === "string") {
-            data.service = JSON.parse(data.service).join(", ");
+            try {
+                data.service = JSON.parse(data.service);
+            } catch (e) {
+                logger.warn(`Failed to parse service for receipt ${receipt_id}: ${e.message}`);
+                data.service = [];
+            }
+        }
+        // Ensure service is an array
+        if (!Array.isArray(data.service)) {
+            data.service = data.service ? [data.service] : [];
         }
 
         return res.render("receiptDetails", {
@@ -99,7 +129,7 @@ async function receiptDetails(req, res, next) {
 async function updateReceipt(req, res) {
     try {
         const receipt_id = req.params.receipt_id;
-        const { patient_name, patient_phone, service, total, mode_of_payment, amount_paid, balance } = req.body;
+        const { patient_name, patient_phone, service, qty, discount, amount, total, mode_of_payment, amount_paid, balance } = req.body;
 
         // Fetch the receipt details to pre-fill the form
         const receipt = await ReceiptItem.getReceiptDetails(receipt_id);
@@ -113,20 +143,16 @@ async function updateReceipt(req, res) {
             patient_name,
             patient_phone,
             service,
-            total,
+            qty || 1,
+            discount || 0,
+            amount || total || 0,
+            total || 0,
             mode_of_payment,
-            amount_paid,
-            balance
+            amount_paid || 0,
+            balance || 0
         );
 
         if (updated) {
-<<<<<<< Updated upstream
-            res.status(200).render("receiptEdit", {
-                message: "Receipt updated successfully",
-                receipt, // Pass the receipt object to the view
-                user: req.user
-            });
-=======
                 // Guard: prevent rendering if headers already sent
                 if (res.headersSent) {
                     logger.warn('updateReceipt: headers already sent, skipping render');
@@ -139,11 +165,15 @@ async function updateReceipt(req, res) {
                 data.forEach(r => {
                     if (typeof r.service === "string") {
                         try {
-                            r.service = JSON.parse(r.service).join(", ");
+                            r.service = JSON.parse(r.service);
                         } catch (e) {
-                            // If parsing fails, leave it as-is
                             logger.warn(`Failed to parse service for receipt ${r.receipt_id}: ${e.message}`);
+                            r.service = [];
                         }
+                    }
+                    // Ensure service is an array
+                    if (!Array.isArray(r.service)) {
+                        r.service = r.service ? [r.service] : [];
                     }
                 });
 
@@ -165,14 +195,15 @@ async function updateReceipt(req, res) {
                     updatedReceipt: receipt,
                     user: req.user
                 });
->>>>>>> Stashed changes
         } else {
             logger.warn(`Receipt with ID ${receipt_id} not updated`);
             res.status(404).json({ message: "Receipt not updated" });
         }
     } catch (error) {
         logger.error(`Error in updateReceipt: ${error.message}`, error);
-        res.status(500).json({ message: "Error updating receipt" });
+        if (!res.headersSent) {
+            res.status(500).json({ message: "Error updating receipt" });
+        }
     }
 }
 

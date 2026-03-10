@@ -1,4 +1,4 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -13,7 +13,9 @@ body {
     padding: 0;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     font-family: 'Roboto', sans-serif;
     color: #343a40;
 }
@@ -23,7 +25,7 @@ h1, h2, h3 {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #310909;
+    background-color: #000000;
     color: white;
 }
 
@@ -46,9 +48,10 @@ h1, h2, h3 {
     text-decoration: none;
 }
 
-.brand-name:hover{
+.brand-name:hover {
     text-decoration: underline;
 }
+
 .navbar-right {
     font-size: 1em;
 }
@@ -61,13 +64,13 @@ h1, h2, h3 {
 .account-link:hover {
     text-decoration: underline;
 }
+
 main {
     padding: 20px;
-    background-color: white;
+    background-color: #f8f9fa;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    
+    transition: margin-left 0.3s;
 }
 
 h2 {
@@ -97,15 +100,20 @@ h2 {
     background-color: #ffffff;
 }
 
-.table th, .table td {
+.table th,
+.table td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #dee2e6;
 }
 
 .table th {
-    background-color: #007bff;
+    background-color: #616060;
     color: #ffffff;
+}
+
+.table-specs {
+    padding: 20px;
 }
 
 .table tr:hover {
@@ -135,7 +143,9 @@ input[type="number"] {
     border-radius: 5px;
 }
 
-input[type="text"], input[type="number"], select {
+input[type="text"],
+input[type="number"],
+select {
     width: 100%;
     padding: 10px;
     margin: 5px 0 15px;
@@ -169,7 +179,8 @@ button:hover {
     gap: 20px;
 }
 
-h2, h2 {
+h2,
+h2 {
     color: #333;
     text-align: center;
     padding: 2px;
@@ -198,21 +209,27 @@ table {
     border-collapse: collapse;
     margin-top: 20px;
 }
-th, td {
+
+th,
+td {
     padding: 10px;
     border: 1px solid #ddd;
     text-align: left;
 }
+
 th {
-    background-color: #f4f4f4; /* Already present, keeps header light gray */
+    background-color: #f4f4f4;
+    /* Already present, keeps header light gray */
 }
 
 tbody tr:nth-child(even) {
-    background-color: #f3dede; /* Very faint gray for even rows */
+    background-color: #f3dede;
+    /* Very faint gray for even rows */
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #fff; /* Slightly different faint gray for odd rows */
+    background-color: #fff;
+    /* Slightly different faint gray for odd rows */
 }
 
 /* Optionally, you can add a hover effect for better readability */
@@ -247,6 +264,7 @@ tbody tr:hover {
     flex-direction: column;
     line-height: 25px;
 }
+
 .total {
     text-align: right;
     display: flex;
@@ -296,12 +314,13 @@ footer {
     height: 100vh;
 }
 
-.c-ontainer{
+.c-ontainer {
     background-color: white;
     width: 500px;
     height: 350px;
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 
 }
 
@@ -342,7 +361,7 @@ footer {
 }
 
 button {
-    width: 100%;
+    width: 300px;
     padding: 10px;
     background-color: #007bff;
     border: none;
@@ -351,6 +370,7 @@ button {
     font-size: 16px;
     cursor: pointer;
 }
+
 #print-button {
     background-color: #20cc09;
 }
@@ -360,11 +380,13 @@ button {
     margin-top: 10px;
 }
 
-#back:hover, #print-button:hover {
+#back:hover,
+#print-button:hover {
     background-color: #26442c;
 }
 
-#print-button, #back {
+#print-button,
+#back {
     width: 90px;
     font-size: 20px;
 }
@@ -373,7 +395,7 @@ button:hover {
     background-color: #0056b3;
 }
 
-button  {
+button {
     text-align: center;
 }
 
@@ -387,30 +409,10 @@ p a:hover {
 }
 
 @media print {
-    body * {
+    /* body * {
         visibility: hidden;
-    }
-
-    .receipt-card,
-    .receipt,
-    .receipt-card * {
-        visibility: visible;
-    }
-
-    .receipt {
-        box-shadow: none;
-        background-image: url('/images/shinedental-water_mark.png'); /* Ensure the correct path to the image */
-        background-size: 400px 300px; /* Set specific width and height for the background image */
-        background-position: center; /* Centers the image */
-        background-repeat: no-repeat; /* Prevents the image from repeating */
-        width: 100%;
-        height: auto;
-        padding: 20px;
-        position: relative;
-        margin-top: 0;
-        
-        
-    }
+        background-color: white;
+    } */
 
 
 
@@ -418,6 +420,7 @@ p a:hover {
         position: absolute;
         width: 100%;
         margin: 0;
+        background-color: white;
     }
 
     .receipt-table {
@@ -433,7 +436,121 @@ p a:hover {
     .receipt-table th,
     .receipt-table td {
         border: 1px solid #ddd;
-        padding: 8px;
+        padding: 4px;
         text-align: left;
+    }
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 250px;
+    background-color: #1f2937;
+    color: rgb(0, 0, 0);
+    min-height: calc(100vh - 70px);
+    padding: 0;
+    position: fixed;
+    left: 0;
+    top: 70px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.12);
+    overflow-y: auto;
+    z-index: 100;
+    border-right: 1px solid #374151;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin: 0;
+    /* padding: 0; */
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 20px;
+    color: #020202;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    font-size: 14px;
+}
+
+.sidebar-menu a i {
+    width: 16px;
+    text-align: center;
+    color: #0a0a0a;
+    transition: color 0.2s ease;
+}
+
+.sidebar-menu a:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #f3f4f6;
+}
+
+.sidebar-menu a:hover i {
+    color: #0284c7;
+}
+
+.sidebar-menu a.active {
+    background-color: #0284c7;
+    border-left-color: #0284c7;
+    color: white;
+}
+
+.sidebar-menu a.active i {
+    color: white;
+}
+
+.sidebar-menu a.logout-link {
+    color: #ef4444;
+}
+
+.sidebar-menu a.logout-link i {
+    color: #ef4444;
+}
+
+.sidebar-menu a.logout-link:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+}
+
+.sidebar-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-title i {
+    font-size: 12px;
+}
+
+.sidebar-title:first-child {
+    margin-top: 0;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: relative;
+        min-height: auto;
+        top: 0;
+        min-height: auto;
+    }
+
+    main {
+        margin-left: 0 !important;
     }
 }

@@ -34,3 +34,50 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE invoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_number VARCHAR(50) UNIQUE NOT NULL,
+    client_name VARCHAR(255) NOT NULL,
+    client_address VARCHAR(500),
+    client_tel VARCHAR(20) NOT NULL,
+    invoice_date DATE NOT NULL,
+    lpo VARCHAR(100),
+    total DECIMAL(10,2) NOT NULL,
+    status ENUM('draft', 'sent', 'paid', 'cancelled') NOT NULL DEFAULT 'draft',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE invoice_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_id INT NOT NULL,
+    item_name VARCHAR(255) NOT NULL,
+    qty INT NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
+);
+
+CREATE TABLE invoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_number VARCHAR(50) UNIQUE NOT NULL,
+    client_name VARCHAR(255) NOT NULL,
+    client_address VARCHAR(500),
+    client_tel VARCHAR(20) NOT NULL,
+    invoice_date DATE NOT NULL,
+    lpo VARCHAR(100),
+    total DECIMAL(10,2) NOT NULL,
+    status ENUM('draft', 'sent', 'paid', 'cancelled') NOT NULL DEFAULT 'draft',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE invoice_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_id INT NOT NULL,
+    item_name VARCHAR(255) NOT NULL,
+    qty INT NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
+);

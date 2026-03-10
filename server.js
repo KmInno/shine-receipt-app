@@ -6,6 +6,7 @@ const cors = require("cors");
 const path = require("path");
 const authenticateToken = require('./src/middleware/authMiddleware');
 const receiptRoutes = require("./src/routes/receiptRoutes");
+const invoiceRoutes = require("./src/routes/invoiceRoutes");
 const baseController = require("./src/controllers/baseController");
 const flash = require("connect-flash");
 const session = require("express-session");
@@ -13,6 +14,9 @@ const cookieParser = require('cookie-parser');
 const accountRoutes = require('./src/routes/account-route');
 const baseRoutes = require('./src/routes/baseroute');
 require('dotenv').config();
+
+// logging utility
+const logger = require('./src/utils/logger');
 
 const app = express();
 app.use(express.json());
@@ -92,27 +96,21 @@ app.use((req, res, next) => {
 // Serve views folder
 app.use("/", baseRoutes);
 
-<<<<<<< Updated upstream
 app.get("/receipt", require("./src/routes/baseroute"));
 
 app.use("/receipt", require("./src/routes/receiptRoutes"));
 app.use("/receipts", require("./src/routes/receiptRoutes"));
 app.use("/receiptDetails", require("./src/routes/receiptRoutes"));
 // app.use("/delete", require("./src/routes/receiptRoutes"));
-=======
-// Consolidated receipt routes - mount on multiple paths for compatibility
-app.use("/receipts", receiptRoutes);
-app.use("/receipt", receiptRoutes);  // for backward compatibility
-app.use("/receiptDetails", receiptRoutes);
->>>>>>> Stashed changes
+
+// Invoice routes
+app.use("/invoices", invoiceRoutes);
 
 // login routes
 app.use("/account", accountRoutes);
 
 // Protected route 
-app.get('/', authenticateToken, (req, res) => {
-    res.render('index', { title:'Dashboard', user: req.user });
-});
+app.get('/', authenticateToken, baseController.buildHome);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

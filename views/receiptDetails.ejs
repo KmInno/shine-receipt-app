@@ -1,168 +1,328 @@
 <style>
-    h1 {
-        text-align: center;
-        padding-bottom: 10px;
-        font-size: 18px;
+    body {
+        font-family: Arial;
     }
 
     .receipt {
-        background-image: url('/images/shinedental-water_mark.png'); /* Ensure the correct path to the image */
-        background-size: 400px 300px; /* Set specific width and height for the background image */
-        background-repeat: no-repeat; /* Prevents the image from repeating */
-        background-position: center; /* Centers the image */
-
-
+        width: 700px;
+        /* height: 210mm; */
+        margin: auto;
+        padding: 20px;
+        background-image: url('/images/shinedental-water_mark.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 350px;
     }
 
-    .hidden {
-        display: none;
+    h1 {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 10px;
     }
-    .visible {
+
+    .patient-info span {
         display: block;
+        font-size: 14px;
     }
-    </style>
-<body>
-    <div class="receipt-card">
-        <div class="receipt">
-            <section>
-                <img src="/images/reciept_logo.png" alt="Receipt Logo">
-                <div class="first">
-                    <h1>Payment Receipt</h1>
-                    <span> <strong>Date: </strong>
-                        <%= new Date(receipt.created_at).toLocaleDateString('en-GB') %>
-                    </span>
-                    <span> <strong>Name: </strong>
-                        <%= receipt.patient_name %>
-                    </span>
-                    <span> <strong>Tel: </strong>
-                        <%= receipt.patient_phone %>
-                    </span>
-                </div>
-            </section>
 
-            <section>
-                <table class="receipt-table">
-                    <thead>
-                        <tr>
-                            <th>Services</th>
-                            <th>Mode of Payment</th>
-                            <th>Amount Paid</th>
-                            <th>Balance</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="item-list">
-                            <td>
-                                <%= receipt.service %>
-                            </td>
-                            <td>
-                                <%= receipt.mode_of_payment %>
-                            </td>
-                            <td>
-                                UGX <%= receipt.amount_paid %>
-                            </td>
-                            <td>
-                                UGX <%= receipt.balance %>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
 
-            <section>
-                <div class="total">
-                    <span class="paid_amount"> <strong> Amount Paid </strong>
-                        UGX <%= receipt.amount_paid %>
-                    </span>
-                    <br>
-                    <span id="amount-in-words"></span>
-                </div>
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
 
-                <br>
-                <br>
-                <br>
-                <p>BY: _______________</p>
+    th,
+    td {
+        padding: 6px;
+        font-size: 13px;
+    }
 
-                <br>
-                <div class="last">
-                    <p>Thank you for choosing Shine Dental Surgery</p>
-                </div>
-            <%- include('./partials/footer') %>
+    .total-row td {
+        font-weight: bold;
+    }
 
-            </section>
-        </div>
+    .summary-box {
+        width: 250px;
+        margin-top: 10px;
+        float: right;
+    }
+
+    .summary-box td {
+        border: 1px solid black;
+    }
+
+    .footer {
+        margin-top: 30px;
+    }
+
+    .thank {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .buttons {
+        /* align-items: center; */
+        /* margin-left: 60px; */
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+    }
+
+    @media print {
+
+        body {
+            margin: 0;
+            background-color: white;
+        }
+
+        .receipt {
+            /* height: 2480px; */
+            width: 100%;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        button {
+            display: none;
+        }
+
+        footer {
+            background-color: white;
+        }
+
+    }
+</style>
+
+
+<div class="receipt">
+
+    <img src="/images/reciept_logo.png" width="120">
+
+    <h1>Payment Receipt</h1>
+
+    <div class="patient-info">
+
+        <span><strong>Receipt Number:</strong>
+            <%= receipt.id %>
+        </span>
+
+        <span><strong>Patient Number:</strong> SDS/<%= receipt.id || '' %></span>
+
+        <span><strong>Patient Name:</strong>
+            <%= receipt.patient_name %>
+        </span>
+
+        <span><strong>Tel:</strong>
+            <%= receipt.patient_phone %>
+        </span>
+
+        <span><strong>Date:</strong>
+            <%= new Date(receipt.created_at).toLocaleDateString('en-GB') %>
+        </span>
+
     </div>
 
-    <button id="print-button">Print</button>
 
-    <a href="/receipts"><button id="back">Back</button></a>
+    <table>
 
-    <button id="edit-button" class="<%= user.usertype === 'admin' ? 'visible' : 'hidden' %>">Edit</button>
+        <thead>
+            <tr>
+                <th>Service</th>
+                <th>Mode of Payment</th>
+                <th>Qty</th>
+                <th>Discount</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
 
-</body>
+        <tbody>
 
-</html>
+            <% let services=[]; try{ if(typeof receipt.service==='string' ){ const parsed=JSON.parse(receipt.service);
+                services=Array.isArray(parsed) ? parsed : [parsed]; }else if(Array.isArray(receipt.service)){
+                services=receipt.service; }else if(receipt.service){ services=[receipt.service]; } }catch(e){
+                services=receipt.service ? [receipt.service] : []; } %>
+
+
+                <% services.forEach(function(item){ %>
+
+                    <tr>
+
+                        <td>
+                            <%= item.name || item.service || item %>
+                        </td>
+
+                        <td>
+                            <%= receipt.mode_of_payment %>
+                        </td>
+
+                        <td>
+                            <%= item.qty || 1 %>
+                        </td>
+
+                        <td>UGX <%= item.discount || 0 %>
+                        </td>
+
+                        <td>UGX <%= item.amount || receipt.total %>
+                        </td>
+
+                    </tr>
+
+                    <% }) %>
+
+
+                        <tr class="total-row">
+
+                            <td colspan="4" style="text-align:right">Total Amount</td>
+
+                            <td>UGX <%= receipt.total || receipt.total_amount %>
+                            </td>
+
+                        </tr>
+
+        </tbody>
+
+    </table>
+
+
+    <br>
+
+    <div>
+
+        <strong>Total Amount in Words:</strong>
+
+        <span id="amount-in-words"></span>
+
+    </div>
+
+
+    <br>
+
+    <table class="summary-box">
+
+        <tr>
+            <td><strong>Amount Paid</strong></td>
+            <td style="text-align:right">UGX <%= Number(receipt.amount_paid || 0).toLocaleString('en-US') %>
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>Balance</strong></td>
+            <td style="text-align:right">UGX <%= Number(receipt.balance || 0).toLocaleString('en-US') %>
+            </td>
+        </tr>
+
+    </table>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="footer">
+
+        <p><strong>Served By:</strong>
+            <%= user.name || user.email %>
+        </p>
+    </div>
+
+
+    <div class="thank">
+
+        Thank you for choosing Shine Dental Surgery
+
+    </div>
+
+    <div class="water-mark">
+     <%- include('partials/footer') %>
+    </div>
+
+</div>
+
+<div class="buttons">
+    <button onclick="window.print()">Print</button>
+    <a href="/receipts"><button>Back</button></a>
+</div>
+
+
+
+
+
 <script>
-    // JavaScript to trigger print
-    document.getElementById('print-button').addEventListener('click', function () {
-        window.print();
-    });
 
-    // Function to convert number to words
     function numberToWords(num) {
-        const a = [
-            '', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
-        ];
-        const b = [
-            '', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'
-        ];
 
-        const numberToWordsHelper = (n) => {
+        const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+
+        const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+        function convert(n) {
+
             if (n < 20) return a[n];
+
             if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? '-' + a[n % 10] : '');
-            if (n < 1000) return a[Math.floor(n / 100)] + ' hundred' + (n % 100 ? ' and ' + numberToWordsHelper(n % 100) : '');
-            if (n < 1000000) return numberToWordsHelper(Math.floor(n / 1000)) + ' thousand' + (n % 1000 ? ' ' + numberToWordsHelper(n % 1000) : '');
-            if (n < 1000000000) return numberToWordsHelper(Math.floor(n / 1000000)) + ' million' + (n % 1000000 ? ' ' + numberToWordsHelper(n % 1000000) : '');
-            return numberToWordsHelper(Math.floor(n / 1000000000)) + ' billion' + (n % 1000000000 ? ' ' + numberToWordsHelper(n % 1000000000) : '');
-        };
 
-        return numberToWordsHelper(num);
+            if (n < 1000) return a[Math.floor(n / 100)] + ' hundred ' + convert(n % 100);
+
+            if (n < 1000000) return convert(Math.floor(n / 1000)) + ' thousand ' + convert(n % 1000);
+
+            return '';
+        }
+
+        return convert(num);
     }
 
-    // Format numbers with commas
-    function formatWithCommas(num) {
-        return num.toLocaleString('en-US');
+    const totalAmount = Math.round(Number(<%= receipt.total || receipt.total_amount || 0 %>) || 0);
+
+    function numberToWordsFull(num) {
+        if (num === 0) return 'zero';
+        const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+        const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+        const scales = ['', 'thousand', 'million', 'billion', 'trillion'];
+
+        function chunkToWords(n) {
+            let str = '';
+            if (n >= 100) {
+                str += a[Math.floor(n / 100)] + ' hundred';
+                n = n % 100;
+                if (n) str += ' and ';
+            }
+            if (n >= 20) {
+                str += b[Math.floor(n / 10)];
+                if (n % 10) str += '-' + a[n % 10];
+            } else if (n > 0) {
+                str += a[n];
+            }
+            return str;
+        }
+
+        let words = [];
+        let scale = 0;
+        let n = num;
+
+        while (n > 0) {
+            const chunk = n % 1000;
+            if (chunk) {
+                const chunkWords = chunkToWords(chunk) + (scales[scale] ? ' ' + scales[scale] : '');
+                words.unshift(chunkWords.trim());
+            }
+            n = Math.floor(n / 1000);
+            scale++;
+        }
+
+        return words.join(', ').replace(/, (?=[^,]*$)/, ' and ');
     }
 
-    // Convert total amount to words and display it
-    const totalAmount = parseFloat('<%= receipt.amount_paid %>');
+    const words = numberToWordsFull(totalAmount);
+    document.getElementById('amount-in-words').innerText = words.charAt(0).toUpperCase() + words.slice(1) + ' shillings';
 
-    // Function to capitalize the first letter of a string
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    // Generate the amount in words and capitalize the first letter
-    const amountInWords = numberToWords(totalAmount) + ' shillings';
-    document.getElementById('amount-in-words').innerText = capitalizeFirstLetter(amountInWords);
-
-    // Format amount_paid and balance with commas
-    const amountPaidElement = document.querySelector('.item-list td:nth-child(3)');
-    const balanceElement = document.querySelector('.item-list td:nth-child(4)');
-    const paid_amount = document.querySelector('.paid_amount');
-
-    const amountPaid = parseFloat('<%= receipt.amount_paid %>');
-    const balance = parseFloat('<%= receipt.balance %>');
-
-    if (amountPaidElement) {
-        amountPaidElement.innerText = 'UGX ' + formatWithCommas(amountPaid);
-    }
-
-    if (balanceElement) {
-        balanceElement.innerText = 'UGX ' + formatWithCommas(balance);
-    }
-
-    if(paid_amount) {
-        paid_amount.innerText = 'UGX' + formatWithCommas(amountPaid)
-    }
 </script>
+
+<%- include('partials/footer') %>
