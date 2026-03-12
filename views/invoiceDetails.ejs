@@ -18,6 +18,11 @@
             padding: 30px;
         }
 
+        .blk,
+        .blk-02 {
+            display: inline;
+        }
+
         /* COMPANY HEADER */
 
         .company-header {
@@ -235,53 +240,53 @@
                         <td>
                             <%= invoice.client_address || '-' %>
 
-                            <script>
-                                function numberToWordsFull(num) {
-                                    if (!num) return 'zero';
-                                    const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-                                    const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-                                    const scales = ['', 'thousand', 'million', 'billion'];
+                                <script>
+                                    function numberToWordsFull(num) {
+                                        if (!num) return 'zero';
+                                        const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+                                        const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+                                        const scales = ['', 'thousand', 'million', 'billion'];
 
-                                    function chunkToWords(n) {
-                                        let str = '';
-                                        if (n >= 100) {
-                                            str += a[Math.floor(n / 100)] + ' hundred';
-                                            n = n % 100;
-                                            if (n) str += ' and ';
+                                        function chunkToWords(n) {
+                                            let str = '';
+                                            if (n >= 100) {
+                                                str += a[Math.floor(n / 100)] + ' hundred';
+                                                n = n % 100;
+                                                if (n) str += ' and ';
+                                            }
+                                            if (n >= 20) {
+                                                str += b[Math.floor(n / 10)];
+                                                if (n % 10) str += '-' + a[n % 10];
+                                            } else if (n > 0) {
+                                                str += a[n];
+                                            }
+                                            return str;
                                         }
-                                        if (n >= 20) {
-                                            str += b[Math.floor(n / 10)];
-                                            if (n % 10) str += '-' + a[n % 10];
-                                        } else if (n > 0) {
-                                            str += a[n];
+
+                                        let words = [];
+                                        let scale = 0;
+                                        let n = Math.floor(num);
+
+                                        while (n > 0) {
+                                            const chunk = n % 1000;
+                                            if (chunk) {
+                                                const chunkWords = chunkToWords(chunk) + (scales[scale] ? ' ' + scales[scale] : '');
+                                                words.unshift(chunkWords.trim());
+                                            }
+                                            n = Math.floor(n / 1000);
+                                            scale++;
                                         }
-                                        return str;
+
+                                        return words.join(', ').replace(/, (?=[^,]*$)/, ' and');
                                     }
 
-                                    let words = [];
-                                    let scale = 0;
-                                    let n = Math.floor(num);
-
-                                    while (n > 0) {
-                                        const chunk = n % 1000;
-                                        if (chunk) {
-                                            const chunkWords = chunkToWords(chunk) + (scales[scale] ? ' ' + scales[scale] : '');
-                                            words.unshift(chunkWords.trim());
-                                        }
-                                        n = Math.floor(n / 1000);
-                                        scale++;
-                                    }
-
-                                    return words.join(', ').replace(/, (?=[^,]*$)/, ' and');
-                                }
-
-                                const invoiceTotalAmount = Math.round(Number(<%= parseFloat(invoice.total) || 0 %>) || 0);
-                                const words = numberToWordsFull(invoiceTotalAmount);
-                                document.addEventListener('DOMContentLoaded', function(){
-                                    const el = document.getElementById('amount-in-words');
-                                    if (el) el.innerText = words.charAt(0).toUpperCase() + words.slice(1) + ' shillings';
-                                });
-                            </script>
+                                    const invoiceTotalAmount = Math.round(Number(<%= parseFloat(invoice.total) || 0 %>) || 0);
+                                    const words = numberToWordsFull(invoiceTotalAmount);
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const el = document.getElementById('amount-in-words');
+                                        if (el) el.innerText = words.charAt(0).toUpperCase() + words.slice(1) + ' shillings';
+                                    });
+                                </script>
                         </td>
                     </tr>
 
@@ -306,7 +311,9 @@
                     <tr>
                         <td>Invoice</td>
                         <td>
-                            <strong><%= invoice.invoice_number %></strong>
+                            <strong>
+                                <%= invoice.invoice_number %>
+                            </strong>
                         </td>
                     </tr>
 
@@ -383,15 +390,33 @@
         <div class="summary-container">
 
             <div class="payment-info">
-                <div class="label">Amount in Words</div>
-                <div id="amount-in-words" style="margin-bottom:8px;font-style:italic"></div>
+                <div class="blk">
+                    <div class="label">Amount in Words</div>
+                    <div id="amount-in-words" style="margin-bottom:8px;font-style:italic"></div>
+                </div>
 
-                <div class="label">Served by</div>
-                <div><%= (typeof servedBy !== 'undefined' ? servedBy : (user && (user.name || user.email || user.username)) || '_________') %></div>
+                <div class="blk-02">
+                    <div class="label">Served by:</div>
+                    <div>
+                        <%= (typeof servedBy !=='undefined' ? servedBy : (user && (user.name || user.email ||
+                            user.username)) || '_________' ) %>
+                    </div>
+
+                </div>
+
+                <div class="terms">
+                    <br>
+                    <strong>
+                        <div>Terms $ Conditions</div>
+                    </strong>
+                    <div>Total Payment due in 30 days</div>
+                </div>
 
                 <div class="label">Payment details:</div>
-                <strong></strong><div>Merchant code:</div></strong>
-                <div>Airlelcode: 6072511</div>
+                <strong></strong>
+                <div>Merchant code:</div></strong>
+                <div>Airtelcode: 6072511</div>
+
             </div>
 
             <div class="total-box">
@@ -401,6 +426,12 @@
                     <tr>
                         <td>Sub Total</td>
                         <td>UGX <%= parseFloat(invoice.total).toLocaleString() %>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Tax</td>
+                        <td> 0.0%
                         </td>
                     </tr>
 
