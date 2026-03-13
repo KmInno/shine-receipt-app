@@ -4,29 +4,51 @@ const logger = require("../utils/logger"); // Add a logger utility
 
 async function addReceipt(req, res) {
     try {
-        const { patient_name, patient_phone, service, qty, amount, total, mode_of_payment, amount_paid, balance } = req.body;
-        const finalAmountPaid = amount_paid || total || 0;
-        const finalBalance = balance !== undefined ? balance : (total || 0) - finalAmountPaid;
-        const receipt = await ReceiptItem.createReceipt(patient_name, patient_phone, service, qty || 1, amount || total || 0, total || 0, mode_of_payment, finalAmountPaid, finalBalance);
+        const {
+            patient_name,
+            patient_phone,
+            patient_address,
+            service,
+            qty,
+            amount,
+            total,
+            mode_of_payment,
+            amount_paid,
+            balance
+        } = req.body;
 
-        if (receipt) {
-            const data = await ReceiptItem.getReceipts();
-            res.status(201).render("receipts", {
-                title: "Receipts",
-                receipts: data,
-                user: req.user
-            });
-        } else {
+        const finalAmountPaid = amount_paid || total || 0;
+        const finalBalance = balance ?? ((total || 0) - finalAmountPaid);
+
+        const receipt = await ReceiptItem.createReceipt(
+            patient_name,
+            patient_phone,
+            patient_address,
+            service,
+            qty || 1,
+            amount || total || 0,
+            total || 0,
+            mode_of_payment,
+            finalAmountPaid,
+            finalBalance
+        );
+
+        if (!receipt) {
             logger.error("Failed to add receipt: Database operation returned null");
-            if (!res.headersSent) {
-                return res.status(500).json({ message: "Error adding receipt" });
-            }
+            return res.status(500).json({ message: "Error adding receipt" });
         }
+
+        const data = await ReceiptItem.getReceipts();
+
+        return res.status(201).render("receipts", {
+            title: "Receipts",
+            receipts: data,
+            user: req.user
+        });
+
     } catch (error) {
         logger.error(`Error in addReceipt: ${error.message}`, error);
-        if (!res.headersSent) {
-            res.status(500).json({ message: "Internal server error" });
-        }
+        return res.status(500).json({ message: "Internal server error" });
     }
 }
 

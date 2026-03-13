@@ -16,6 +16,9 @@ CREATE TABLE receipts (
 ALTER TABLE receipts 
 ADD amount_paid VARCHAR(20) NOT NULL AFTER mode_of_payment;
 
+ALTER TABLE receipts 
+ADD patient_address VARCHAR(500) AFTER patient_phone;
+
 
 CREATE TABLE receipt_items (
     id INT AUTO_INCREMENT PRIMARY KEY,

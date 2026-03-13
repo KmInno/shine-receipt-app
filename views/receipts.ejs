@@ -38,6 +38,7 @@
                         <th>Date</th>
                         <th>Patient Name</th>
                         <th>Phone Number</th>
+                        <th>Address</th>
                         <th>Services</th>
                         <th>Total</th>
                         <th>Mode of Payment</th>
@@ -69,6 +70,9 @@
                                         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
                                             alt="WhatsApp" style="height:16px;vertical-align:middle;margin-left:4px;">
                                 </a>
+                            </td>
+                            <td>
+                                <%= receipt.patient_address || '-' %>
                             </td>
                             <td>
                                 <% 

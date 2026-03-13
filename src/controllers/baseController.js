@@ -103,10 +103,10 @@ baseController.buildHome = async function (req, res, next) {
 }
 
 baseController.buildReceipt = async function (req, res, next) {
-    res.render("receipt", {
-        title: "Receipt Form"
+    return res.render("receipt", {
+        title: "Receipt Form",
+        user: req.user
     });
-    next();
 }
 
 module.exports = baseController;
