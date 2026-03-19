@@ -8,6 +8,7 @@ const authenticateToken = require('./src/middleware/authMiddleware');
 const receiptRoutes = require("./src/routes/receiptRoutes");
 const invoiceRoutes = require("./src/routes/invoiceRoutes");
 const baseController = require("./src/controllers/baseController");
+const dbold = require("./src/routes/databaseOld-route");
 const flash = require("connect-flash");
 const session = require("express-session");
 const cookieParser = require('cookie-parser');
@@ -54,7 +55,7 @@ app.use((req, res, next) => {
  *************************/
 app.set("view engine", "ejs");
 app.use(expressLayouts);
-app.set("layout", "./layouts/layout");
+app.set("layout", "layouts/layout");
 
 // Routes
 app.use(static);
@@ -83,6 +84,10 @@ app.use("/account", accountRoutes);
 
 // Protected route 
 app.get('/', authenticateToken, baseController.buildHome);
+
+// old database page - support both route formats
+app.use('/databaseOld', dbold);
+app.use('/database-old', dbold);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

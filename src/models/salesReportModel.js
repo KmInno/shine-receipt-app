@@ -91,7 +91,7 @@ async function getMonthlySalesSummary(year, month) {
                 SUM(balance) as total_balance
             FROM receipts 
             WHERE YEAR(created_at) = ? AND MONTH(created_at) = ?
-            GROUP BY YEAR(created_at), MONTH(created_at), DAY(created_at)
+            GROUP BY DATE(created_at), DAY(created_at)
             ORDER BY DATE(created_at) DESC`,
             [year, month]
         );
@@ -143,7 +143,7 @@ async function getAnnualSalesSummary(year) {
                 SUM(balance) as total_balance
             FROM receipts 
             WHERE YEAR(created_at) = ?
-            GROUP BY YEAR(created_at), MONTH(created_at)
+            GROUP BY MONTH(created_at), DATE_FORMAT(created_at, '%B')
             ORDER BY MONTH(created_at) ASC`,
             [year]
         );
