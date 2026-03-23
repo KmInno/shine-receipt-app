@@ -4,9 +4,11 @@ const expressLayouts = require("express-ejs-layouts");
 const static = require("./src/routes/static");
 const cors = require("cors");
 const path = require("path");
+const { formatPatientId } = require("./src/utils/patientIdFormatter");
 const authenticateToken = require('./src/middleware/authMiddleware');
 const receiptRoutes = require("./src/routes/receiptRoutes");
 const invoiceRoutes = require("./src/routes/invoiceRoutes");
+const appointmentRoutes = require("./src/routes/appointmentRoutes");
 const baseController = require("./src/controllers/baseController");
 const dbold = require("./src/routes/databaseOld-route");
 const flash = require("connect-flash");
@@ -47,6 +49,7 @@ app.use((req, res, next) => {
 // Middleware to attach user to res.locals
 app.use((req, res, next) => {
     res.locals.user = req.user || null;
+    res.locals.formatPatientId = formatPatientId;
     next();
 });
 
@@ -78,6 +81,9 @@ app.use("/expenses", expensesRoutes);
 
 // Sales Report routes
 app.use("/sales-report", salesReportRoutes);
+
+// Appointments routes
+app.use("/appointments", appointmentRoutes);
 
 // login routes
 app.use("/account", accountRoutes);

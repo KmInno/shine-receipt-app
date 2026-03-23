@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .patient-header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+
+        .patient-header h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .patient-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .patient-info-item {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .patient-info-item strong {
+            display: block;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .patient-info-item span {
+            display: block;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .receipts-container {
+            background-color: white;
+            border-radius: 6px;
+            padding: 20px;
+        }
+
+        .receipts-container h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .no-receipts {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-size: 1.1em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead {
+            background-color: #f8f9fa;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            font-weight: bold;
+            color: #333;
+        }
+
+        table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .old-records-container {
+            background-color: white;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .old-records-container h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #ff9800;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="table">
+        <div class="table-specs">
+            <a href="/receipts" class="back-link">← Back to Receipts</a>
+
+            <div class="patient-header">
+                <h2>Patient Records</h2>
+                <div class="patient-info">
+                    <div class="patient-info-item">
+                        <strong>Patient Name</strong>
+                        <span><%= patientDetails.patient_name %></span>
+                    </div>
+                    <div class="patient-info-item">
+                        <strong>Phone Number</strong>
+                        <span><a href="https://wa.me/<%= patientDetails.patient_phone.replace(/\D/g, '') %>"
+                                target="_blank" style="color: #25D366; text-decoration: none;">
+                                <%= patientDetails.patient_phone %>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                                    alt="WhatsApp" style="height:14px;vertical-align:middle;margin-left:4px;">
+                            </a></span>
+                    </div>
+                    <div class="patient-info-item">
+                        <strong>Address</strong>
+                        <span><%= patientDetails.patient_address || '-' %></span>
+                    </div>
+                    <div class="patient-info-item">
+                        <strong>Gender</strong>
+                        <span><%= patientDetails.gender || '-' %></span>
+                    </div>
+                    <div class="patient-info-item">
+                        <strong>Age</strong>
+                        <span><%= patientDetails.age || '-' %></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/receipt?patient=<%= encodeURIComponent(patientDetails.patient_name) %>&phone=<%= encodeURIComponent(patientDetails.patient_phone) %>"
+                    class="btn btn-primary">+ Add Receipt</a>
+                <button onclick="history.back()" class="btn btn-secondary">Go Back</button>
+            </div>
+
+            <div class="receipts-container">
+                <h3>Receipt History (<%= patientReceipts.length %> records)</h3>
+
+                <% if (patientReceipts.length > 0) { %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Receipt ID</th>
+                                <th>Date</th>
+                                <th>Services</th>
+                                <th>Total Amount</th>
+                                <th>Amount Paid</th>
+                                <th>Balance</th>
+                                <th>Payment Method</th>
+                                <th>Next Visit</th>
+                                <th>Room</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% patientReceipts.forEach(receipt => { %>
+                                <tr>
+                                    <td><strong>#<%= receipt.id %></strong></td>
+                                    <td><%= new Date(receipt.created_at).toLocaleDateString('en-GB') %></td>
+                                    <td><%= receipt.service %></td>
+                                    <td>UGX <%= Number(receipt.total).toLocaleString('en-US') %></td>
+                                    <td>UGX <%= Number(receipt.amount_paid).toLocaleString('en-US') %></td>
+                                    <td>
+                                        <span style="color: <%= Number(receipt.balance) > 0 ? '#dc3545' : '#28a745' %>; font-weight: bold;">
+                                            UGX <%= Number(receipt.balance).toLocaleString('en-US') %>
+                                        </span>
+                                    </td>
+                                    <td><%= receipt.mode_of_payment %></td>
+                                    <td>
+                                        <% if (receipt.next_visit) { %>
+                                            <%= new Date(receipt.next_visit).toLocaleDateString('en-GB') %>
+                                        <% } else { %>
+                                            -
+                                        <% } %>
+                                    </td>
+                                    <td><%= receipt.room_number || '-' %></td>
+                                    <td>
+                                        <a href="/receiptDetails/<%= receipt.id %>" style="color: #007bff; text-decoration: none; cursor: pointer;">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="no-receipts">
+                        <p>No receipt history found for this patient.</p>
+                        <a href="/receipt?patient=<%= encodeURIComponent(patientDetails.patient_name) %>&phone=<%= encodeURIComponent(patientDetails.patient_phone) %>"
+                            class="btn btn-primary" style="margin-top: 10px;">Add First Receipt</a>
+                    </div>
+                <% } %>
+            </div>
+
+            <div class="old-records-container" id="oldRecordsContainer" style="display: none;">
+                <h3>Historical Records (Old System)</h3>
+                <div id="oldRecordsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load old patient records after page loads
+        window.addEventListener('load', function() {
+            const patientName = '<%= patientDetails.patient_name %>';
+            loadOldPatientRecords(patientName);
+        });
+
+        async function loadOldPatientRecords(patientName) {
+            try {
+                const response = await fetch(`/receipts/search/old-patients/search?name=${encodeURIComponent(patientName)}`);
+                const result = await response.json();
+
+                const container = document.getElementById('oldRecordsContainer');
+                const contentDiv = document.getElementById('oldRecordsContent');
+
+                if (result.success && result.data && result.data.length > 0) {
+                    container.style.display = 'block';
+                    contentDiv.innerHTML = createOldRecordsTable(result.data);
+                } else {
+                    // Hide container if no old records found
+                    container.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading old patient records:', error);
+                document.getElementById('oldRecordsContainer').style.display = 'none';
+            }
+        }
+
+        function createOldRecordsTable(records) {
+            if (!records || records.length === 0) {
+                return '<p style="text-align: center; color: #999;">No historical records found.</p>';
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Patient ID</th>
+                            <th>Treatment</th>
+                            <th>Amount</th>
+                            <th>Balance</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            records.forEach(record => {
+                const date = record.date ? new Date(record.date).toLocaleDateString('en-GB') : 'N/A';
+                const treatment = record.treatment || '-';
+                const amount = record.amount ? 'UGX ' + Number(record.amount).toLocaleString('en-US') : '-';
+                const balance = record.balance ? 'UGX ' + Number(record.balance).toLocaleString('en-US') : '-';
+                const tel = record.tel || '-';
+                const address = record.address || '-';
+
+                html += `
+                    <tr>
+                        <td>${date}</td>
+                        <td><strong>${record.patient_id || 'N/A'}</strong></td>
+                        <td>${treatment}</td>
+                        <td>${amount}</td>
+                        <td><span style="color: ${record.balance > 0 ? '#dc3545' : '#28a745'}">${balance}</span></td>
+                        <td>${tel}</td>
+                        <td>${address}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            return html;
+        }
+    </script>
+</body>
+
+</html>
+
+<%- include('partials/footer') %>

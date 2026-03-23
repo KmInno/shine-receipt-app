@@ -57,29 +57,223 @@ input,select,button{
     border:none;
 }
 
+.patient-info-section {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    border-left: 4px solid #007bff;
+}
+
+.patient-info-section p {
+    margin: 8px 0;
+    font-weight: bold;
+}
+
+.hidden-fields {
+    display: none;
+}
+
+/* Patient Record Decision Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
+    animation: slideDown 0.3s ease-in-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 2px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 22px;
+}
+
+.close {
+    font-size: 28px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.patient-record-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #007bff;
+}
+
+.patient-record-info p {
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.patient-record-info strong {
+    color: #333;
+    display: inline-block;
+    width: 140px;
+}
+
+.patient-record-info span {
+    color: #666;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 2px solid #f0f0f0;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    background-color: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+}
+
+.modal-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    min-width: 200px;
+    text-align: center;
+}
+
+.modal-btn-primary {
+    background-color: #28a745;
+    color: white;
+}
+
+.modal-btn-primary:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.modal-btn-secondary {
+    background-color: #007bff;
+    color: white;
+}
+
+.modal-btn-secondary:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 30% auto;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .modal-btn {
+        width: 100%;
+    }
+}
+
+
 </style>
 
 
 <div class="container">
 
-<h2>Create Receipt</h2>
+<h2 id="pageTitle">Create Receipt</h2>
 
 <form id="receiptForm" action="/receipt/create" method="POST">
 
-<!-- <label>Receipt Name</label>
-<input type="text" name="receipt_name">
+<div id="patientInfoDisplay" class="patient-info-section" style="display: none;">
+    <p id="displayPatientName"></p>
+    <p id="displayPatientPhone"></p>
+</div>
 
-<label>Patient Number</label>
-<input type="text" name="patient_number"> -->
+<div id="patientFieldsContainer">
+    <label>Patient Name</label>
+    <input type="text" name="patient_name" required>
 
-<label>Patient Name</label>
-<input type="text" name="patient_name" required>
+    <label>Phone</label>
+    <input type="text" name="patient_phone" required>
 
-<label>Phone</label>
-<input type="text" name="patient_phone" required>
+    <label>Address</label>
+    <input type="text" name="patient_address">
 
-<label>Address</label>
-<input type="text" name="patient_address">
+    <label>Gender</label>
+    <select name="patient_gender">
+    <option value="">-- Optional --</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+    <option value="Other">Other</option>
+    </select>
+
+    <label>Age</label>
+    <input type="number" name="patient_age" min="0" max="150">
+</div>
+
+<label>Next Visit Date</label>
+<input type="date" name="patient_next_visit">
+
+<label>Next Visit Room Number</label>
+<input type="text" name="room_number">
 
 
 <h3>Services</h3>
@@ -107,6 +301,8 @@ input,select,button{
 
 
 <input type="hidden" id="service" name="service">
+<input type="hidden" id="use_patient_id" name="use_patient_id" value="">
+<input type="hidden" id="force_new_id" name="force_new_id" value="">
 
 <label>Total (UGX)</label>
 <input type="number" id="total" name="total" readonly>
@@ -134,6 +330,31 @@ input,select,button{
 
 </form>
 
+</div>
+
+<!-- Patient Record Decision Modal -->
+<div id="patientModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Patient Record Found</h2>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="patient-record-info">
+                <p><strong>Name:</strong> <span id="modalPatientName"></span></p>
+                <p><strong>Patient ID:</strong> <span id="modalPatientId" style="color: #007bff; font-weight: bold;"></span></p>
+                <p><strong>Total Receipts:</strong> <span id="modalReceiptCount"></span></p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="modal-btn modal-btn-primary" id="useExistingBtn" onclick="useExistingPatient()">
+                ✓ Use This Patient Record
+            </button>
+            <button type="button" class="modal-btn modal-btn-secondary" id="createNewBtn" onclick="createNewPatient()">
+                + Create New Patient (New ID)
+            </button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -228,11 +449,129 @@ document.getElementById("service").value = JSON.stringify(services);
 
 });
 
+// ========== MODAL FUNCTIONS - GLOBAL SCOPE ==========
+let currentPatient = null;
+
+function handleDuplicateName(patients) {
+    if (!patients || patients.length === 0) return;
+    
+    // Store first matching patient
+    currentPatient = patients[0];
+    
+    // Display patient info in modal
+    document.getElementById('modalPatientName').textContent = currentPatient.patient_name || 'N/A';
+    document.getElementById('modalPatientId').textContent = currentPatient.patient_id || 'N/A';
+    document.getElementById('modalReceiptCount').textContent = currentPatient.receipt_count || 0;
+    
+    // Show modal
+    document.getElementById('patientModal').style.display = 'block';
+}
+
+function closePatientModal() {
+    document.getElementById('patientModal').style.display = 'none';
+    currentPatient = null;
+}
+
+function useExistingPatient() {
+    if (currentPatient && currentPatient.patient_id) {
+        document.getElementById('use_patient_id').value = currentPatient.patient_id;
+        console.log('Using existing patient ID:', currentPatient.patient_id);
+        closePatientModal();
+    }
+}
+
+function createNewPatient() {
+    document.getElementById('force_new_id').value = 'true';
+    console.log('Creating new patient with new ID');
+    closePatientModal();
+}
+
+// Modal overlay click handler
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('patientModal');
+    if (event.target === modal) {
+        closePatientModal();
+    }
+});
+
+// Escape key handler
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closePatientModal();
+    }
+});
+
+// Button event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const useBtn = document.getElementById('useExistingBtn');
+    const newBtn = document.getElementById('createNewBtn');
+    const closeBtn = document.querySelector('.modal .close');
+    
+    if (useBtn) useBtn.addEventListener('click', useExistingPatient);
+    if (newBtn) newBtn.addEventListener('click', createNewPatient);
+    if (closeBtn) closeBtn.addEventListener('click', closePatientModal);
+});
 
 window.onload = function(){
 
 addService();
 
+// Check for existing patient from URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+const patientName = urlParams.get('patient');
+const patientPhone = urlParams.get('phone');
+
+if (patientName && patientPhone) {
+    // Hide patient input fields
+    document.getElementById('patientFieldsContainer').style.display = 'none';
+    
+    // Show patient info display
+    document.getElementById('patientInfoDisplay').style.display = 'block';
+    document.getElementById('displayPatientName').textContent = 'Patient: ' + patientName;
+    document.getElementById('displayPatientPhone').textContent = 'Phone: ' + patientPhone;
+    
+    // Change page title
+    document.getElementById('pageTitle').textContent = 'Add Receipt to Existing Patient';
+    
+    // Pre-fill hidden fields with patient data
+    document.querySelector('input[name="patient_name"]').value = patientName;
+    document.querySelector('input[name="patient_phone"]').value = patientPhone;
 }
+
+// Setup duplicate name checking
+const patientNameInput = document.querySelector('input[name="patient_name"]');
+let checkNameTimeout;
+
+patientNameInput.addEventListener('blur', async function() {
+    const patientName = this.value.trim();
+    
+    if (!patientName) return;
+    
+    // Only check if not in existing patient mode
+    if (document.getElementById('patientFieldsContainer').style.display === 'none') {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/receipt/check-name', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ patient_name: patientName })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.exists && data.patients.length > 0) {
+            handleDuplicateName(data.patients);
+        }
+    } catch (error) {
+        console.error('Error checking patient name:', error);
+    }
+});
+
+}
+
 
 </script>

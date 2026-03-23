@@ -5,8 +5,11 @@ const authenticateToken = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
 router.post("/create", authenticateToken, receiptController.addReceipt);
+router.post("/check-name", authenticateToken, receiptController.checkDuplicateName);
 router.post("/edit/:receipt_id", authenticateToken, adminMiddleware, receiptController.updateReceipt)
 router.get("/", authenticateToken, receiptController.getAllReceipts);
+router.get("/search/old-patients/search", authenticateToken, receiptController.searchOldPatients);
+router.get("/patient/:patient_phone", authenticateToken, receiptController.viewPatientRecords);
 router.delete("/delete/:receipt_id", authenticateToken, adminMiddleware, receiptController.deleteReciept);
 router.get("/:receipt_id", authenticateToken, receiptController.receiptDetails);
 router.get("/edit/:receipt_id", authenticateToken, adminMiddleware, async (req, res, next) => {

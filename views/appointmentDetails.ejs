@@ -1,0 +1,226 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    .patient-info {
+        background: #f8f9fa;
+        border-left: 4px solid #007bff;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+    }
+
+    .patient-info h3 {
+        margin: 0 0 10px 0;
+        color: #007bff;
+    }
+
+    .info-row {
+        display: flex;
+        gap: 30px;
+        margin: 8px 0;
+        flex-wrap: wrap;
+    }
+
+    .info-row span {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .value {
+        color: #666;
+    }
+
+    h2 {
+        color: #333;
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+
+    .visits-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .visits-table th {
+        background: #007bff;
+        color: white;
+        padding: 12px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+
+    .visits-table td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    .visits-table tbody tr:hover {
+        background: #f5f5f5;
+    }
+
+    .visits-table a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .visits-table a:hover {
+        text-decoration: underline;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 30px;
+        color: #999;
+        background: #f9f9f9;
+        border-radius: 4px;
+    }
+
+    .badge {
+        background: #e9ecef;
+        color: #495057;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        display: inline-block;
+    }
+
+    .badge-success {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .badge-warning {
+        background: #fff3cd;
+        color: #856404;
+    }
+</style>
+
+<div class="container">
+    <a href="/appointments" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i> Back to Appointments
+    </a>
+
+    <% if (patient) { %>
+        <div class="patient-info">
+            <h3>Patient Information</h3>
+            <div class="info-row">
+                <span>
+                    <span class="label">Name:</span>
+                    <span class="value"><%= patient.patient_name %></span>
+                </span>
+                <span>
+                    <span class="label">Phone:</span>
+                    <span class="value"><%= patient.patient_phone %></span>
+                </span>
+            </div>
+            <div class="info-row">
+                <span>
+                    <span class="label">Gender:</span>
+                    <span class="value"><%= patient.gender || 'N/A' %></span>
+                </span>
+                <span>
+                    <span class="label">Age:</span>
+                    <span class="value"><%= patient.age || 'N/A' %></span>
+                </span>
+            </div>
+            <div class="info-row">
+                <span>
+                    <span class="label">Address:</span>
+                    <span class="value"><%= patient.patient_address || 'N/A' %></span>
+                </span>
+            </div>
+            <div class="info-row">
+                <span>
+                    <span class="label">Next Visit:</span>
+                    <% if (patient.next_visit) { %>
+                        <span class="value badge badge-success">
+                            <%= new Date(patient.next_visit).toLocaleDateString('en-GB') %>
+                        </span>
+                    <% } else { %>
+                        <span class="value badge badge-warning">Not scheduled</span>
+                    <% } %>
+                </span>
+            </div>
+        </div>
+
+        <h2>Visit History</h2>
+        <% if (history && history.length > 0) { %>
+            <table class="visits-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Service</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% history.forEach(visit => { %>
+                        <tr>
+                            <td>
+                                <%= new Date(visit.visit_date).toLocaleDateString('en-GB') %>
+                            </td>
+                            <td>
+                                <% 
+                                    let serviceText = 'N/A';
+                                    if (visit.service) {
+                                        try {
+                                            if (typeof visit.service === 'string') {
+                                                const parsed = JSON.parse(visit.service);
+                                                serviceText = Array.isArray(parsed) ? parsed.join(', ') : parsed;
+                                            } else {
+                                                serviceText = visit.service;
+                                            }
+                                        } catch (e) {
+                                            serviceText = visit.service;
+                                        }
+                                    }
+                                %>
+                                <%= serviceText %>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+            <p style="text-align: center; margin-top: 20px; color: #666;">
+                Total visits: <strong><%= history.length %></strong>
+            </p>
+        <% } else { %>
+            <div class="no-data">
+                <i class="fa-solid fa-inbox" style="font-size: 48px; color: #ccc; margin-bottom: 20px;"></i>
+                <p>No visit history available.</p>
+            </div>
+        <% } %>
+    <% } else { %>
+        <div class="no-data">
+            <p><%= message || 'Patient not found' %></p>
+        </div>
+    <% } %>
+</div>

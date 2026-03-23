@@ -142,7 +142,7 @@
                     <%= receipt.id %>
                 </span>
 
-                <span><strong>Patient Number:</strong> SDS/<%= new Date().getFullYear() %>/<%= receipt.id || '' %></span>
+                <span><strong>Patient Number:</strong> <%= formatPatientId(receipt.patient_id) %></span>
             </div>
 
 
@@ -159,6 +159,11 @@
                     <%= new Date(receipt.created_at).toLocaleDateString('en-GB') %>
                 </span>
 
+                <% if (receipt.next_visit) { %>
+                <span><strong>Next Visit:</strong>
+                    <%= new Date(receipt.next_visit).toLocaleDateString('en-GB') %>
+                </span>
+                <% } %>
             </div>
         </div>
 

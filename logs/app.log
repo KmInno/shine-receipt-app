@@ -196,3 +196,39 @@
 2026-03-18T14:50:19.807Z [INFO]: Daily Report: Using date 2026-03-18
 2026-03-18T14:50:30.132Z [INFO]: Daily Report: Using date 2026-03-18
 2026-03-19T10:00:29.709Z [INFO]: Dashboard: Using today's date: 2026-03-19
+2026-03-19T18:14:23.307Z [ERROR]: Error in getReceipts: Table 'receipt_app.patients' doesn't exist Table 'receipt_app.patients' doesn't exist
+2026-03-19T18:14:23.318Z [ERROR]: Error in buildHome: Table 'receipt_app.patients' doesn't exist Table 'receipt_app.patients' doesn't exist
+2026-03-19T18:14:24.588Z [ERROR]: Error in getReceipts: Table 'receipt_app.patients' doesn't exist Table 'receipt_app.patients' doesn't exist
+2026-03-19T18:14:24.590Z [ERROR]: Error in buildHome: Table 'receipt_app.patients' doesn't exist Table 'receipt_app.patients' doesn't exist
+2026-03-19T18:14:55.280Z [ERROR]: Error in getReceipts: Table 'receipt_app.patients' doesn't exist Table 'receipt_app.patients' doesn't exist
+2026-03-19T18:14:55.285Z [ERROR]: Error in buildHome: Table 'receipt_app.patients' doesn't exist Table 'receipt_app.patients' doesn't exist
+2026-03-19T18:16:08.422Z [ERROR]: Error in getReceipts: Unknown column 'r.patient_id' in 'on clause' Unknown column 'r.patient_id' in 'on clause'
+2026-03-19T18:16:08.460Z [ERROR]: Error in buildHome: Unknown column 'r.patient_id' in 'on clause' Unknown column 'r.patient_id' in 'on clause'
+2026-03-19T18:22:07.379Z [INFO]: Dashboard: Using today's date: 2026-03-19
+2026-03-19T19:14:50.522Z [INFO]: Dashboard: Using today's date: 2026-03-19
+2026-03-19T19:23:28.136Z [INFO]: Dashboard: Using today's date: 2026-03-19
+2026-03-20T02:08:39.544Z [INFO]: Dashboard: Using today's date: 2026-03-20
+2026-03-20T10:44:55.538Z [INFO]: Dashboard: Using today's date: 2026-03-20
+2026-03-23T05:19:46.026Z [INFO]: Dashboard: Using today's date: 2026-03-23
+2026-03-23T05:28:11.224Z [ERROR]: Error in createReceipt: Unknown column 'next_visit_room' in 'field list' Unknown column 'next_visit_room' in 'field list'
+2026-03-23T05:28:11.235Z [ERROR]: Failed to add receipt: Database operation returned null
+2026-03-23T05:33:11.057Z [ERROR]: Error in addReceipt: patient_room_numbee is not defined patient_room_numbee is not defined
+2026-03-23T05:34:38.465Z [ERROR]: Error in createReceipt: Unknown column 'next_visit_room' in 'field list' Unknown column 'next_visit_room' in 'field list'
+2026-03-23T05:34:38.470Z [ERROR]: Failed to add receipt: Database operation returned null
+2026-03-23T05:47:34.945Z [ERROR]: Error in createReceipt: Data truncated for column 'gender' at row 1 Data truncated for column 'gender' at row 1
+2026-03-23T05:47:34.947Z [ERROR]: Failed to add receipt: Database operation returned null
+2026-03-23T06:06:39.619Z [ERROR]: Error in createReceipt: Incorrect integer value: 'sds-26-03-001' for column 'patient_id' at row 1 Incorrect integer value: 'sds-26-03-001' for column 'patient_id' at row 1
+2026-03-23T06:06:39.622Z [ERROR]: Failed to add receipt: Database operation returned null
+2026-03-23T06:23:30.463Z [INFO]: Dashboard: Using today's date: 2026-03-23
+2026-03-23T06:35:03.680Z [INFO]: Using provided patient ID: sds-26-03-008
+2026-03-23T06:35:04.414Z [ERROR]: Error in createReceipt: Duplicate entry 'sds-26-03-008' for key 'receipts.patient_id_UNIQUE' Duplicate entry 'sds-26-03-008' for key 'receipts.patient_id_UNIQUE'
+2026-03-23T06:35:04.422Z [ERROR]: Failed to add receipt: Database operation returned null
+2026-03-23T06:35:50.609Z [INFO]: User chose new patient ID: sds-26-03-009
+2026-03-23T07:02:42.976Z [INFO]: Dashboard: Using today's date: 2026-03-23
+2026-03-23T07:15:20.054Z [INFO]: Using provided patient ID: sds-26-03-009
+2026-03-23T07:15:20.097Z [ERROR]: Error in createReceipt: Duplicate entry 'sds-26-03-009' for key 'receipts.patient_id_UNIQUE' Duplicate entry 'sds-26-03-009' for key 'receipts.patient_id_UNIQUE'
+2026-03-23T07:15:20.101Z [ERROR]: Failed to add receipt: Database operation returned null
+2026-03-23T07:21:00.483Z [INFO]: Using provided patient ID: sds-26-03-009
+2026-03-23T07:26:37.139Z [INFO]: Dashboard: Using today's date: 2026-03-23
+2026-03-23T11:10:06.679Z [INFO]: Dashboard: Using today's date: 2026-03-23
+2026-03-23T11:10:22.398Z [INFO]: Dashboard: Using today's date: 2026-03-23

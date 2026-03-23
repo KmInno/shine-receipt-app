@@ -34,17 +34,12 @@
                 <thead>
                         <tr>
                         <th>Receipt ID</th>
-                        <th>Patient ID</th>
                         <th>Date</th>
                         <th>Patient Name</th>
                         <th>Phone Number</th>
-                        <th>Address</th>
-                        <th>Services</th>
                         <th>Total</th>
-                        <th>Mode of Payment</th>
-                        <th>Amount Paid</th>
                         <th>Balance</th>
-                        <th>Action</th> <!-- Add this line -->
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,9 +47,6 @@
                         <tr class="item-list">
                             <td>
                                 <%= receipt.id %>
-                            </td>
-                            <td>
-                                SDS/<%= receipt.id %>
                             </td>
                             <td>
                                 <%= new Date(receipt.created_at).toLocaleDateString('en-GB') %>
@@ -71,33 +63,10 @@
                                             alt="WhatsApp" style="height:16px;vertical-align:middle;margin-left:4px;">
                                 </a>
                             </td>
-                            <td>
-                                <%= receipt.patient_address || '-' %>
-                            </td>
-                            <td>
-                                <% 
-                                    let servicesText = '';
-                                    if (Array.isArray(receipt.service)) {
-                                        servicesText = receipt.service.map(s => {
-                                            if (s && typeof s === 'object') return s.name || s.service || JSON.stringify(s);
-                                            return String(s);
-                                        }).join(', ');
-                                    } else {
-                                        servicesText = receipt.service;
-                                    }
-                                %>
-                                <%= servicesText %>
-                            </td>
-                        <td><span style=" color: <%=Number(receipt.total)> 0 ? '#000000' : '#000000' %>; font-weight:
-                                    bold;">
-                                    <%= Number(receipt.total).toLocaleString('en-US') %>
+                        <td><span style="color: #000000; font-weight: bold;">
+                                    UGX <%= Number(receipt.total).toLocaleString('en-US') %>
                                         </span></td>
-                        <td><%= receipt.mode_of_payment %></td>
-                        <td><span style=" color: <%=Number(receipt.amount_paid)> 0 ? '#000000' : '#00000' %>; font-weight:
-                                    bold;">
-                                    UGX<%= Number(receipt.amount_paid).toLocaleString('en-US') %>
-                                        </span></td>
-                        <td><span style=" color: <%=Number(receipt.balance)> 0 ? '#dc3545' : '#28a745' %>; font-weight:
+                        <td><span style="color: <%=Number(receipt.balance)> 0 ? '#dc3545' : '#28a745' %>; font-weight:
                                     bold;">
                                     UGX <%= Number(receipt.balance).toLocaleString('en-US') %>
                                         </span>
@@ -107,6 +76,10 @@
                                     <button onclick="deleteReceipt('<%= receipt.id %>')"
                                         style="color: white;">Delete</button>
                                     <% } %>
+                                <a href="/receipts/patient/<%= receipt.patient_phone %>"
+                                    style="margin-left: 5px; padding: 5px 10px; background-color: #007bff; color: white; text-decoration: none; border-radius: 3px; display: inline-block;">
+                                    View Patient
+                                </a>
                             </td>
                         </tr>
                         <% }) %>

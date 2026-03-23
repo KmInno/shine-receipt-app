@@ -1,6 +1,6 @@
 const ReceiptItem = require("../models/receiptModel");
 const accountModel = require("../models/accounts-model");
-const logger = require("../utils/logger"); // Add a logger utility
+const logger = require("../utils/logger");
 
 async function addReceipt(req, res) {
     try {
@@ -8,6 +8,10 @@ async function addReceipt(req, res) {
             patient_name,
             patient_phone,
             patient_address,
+            patient_gender,
+            patient_age,
+            patient_next_visit,
+            room_number,
             service,
             qty,
             amount,
@@ -17,20 +21,49 @@ async function addReceipt(req, res) {
             balance
         } = req.body;
 
+        // Validate required fields
+        if (!patient_name || !patient_name.trim()) {
+            return res.status(400).json({ message: "Patient name is required" });
+        }
+        if (!patient_phone || !patient_phone.trim()) {
+            return res.status(400).json({ message: "Patient phone is required" });
+        }
+
+        // Convert empty strings to null/undefined
+        const finalGender = patient_gender && patient_gender.trim() ? patient_gender : null;
+        const finalAge = patient_age ? parseInt(patient_age) : null;
+        const finalAddress = patient_address && patient_address.trim() ? patient_address : null;
+        const finalNextVisit = patient_next_visit && patient_next_visit.trim() ? patient_next_visit : null;
+        const finalRoomNumber = room_number && room_number.trim() ? room_number : null;
+
         const finalAmountPaid = amount_paid || total || 0;
         const finalBalance = balance ?? ((total || 0) - finalAmountPaid);
 
+        // Prepare options for patient ID handling
+        const options = {};
+        if (req.body.use_patient_id) {
+            options.usePatientId = req.body.use_patient_id;
+        }
+        if (req.body.force_new_id === 'true' || req.body.force_new_id === true) {
+            options.forceNewId = true;
+        }
+
         const receipt = await ReceiptItem.createReceipt(
-            patient_name,
-            patient_phone,
-            patient_address,
+            patient_name.trim(),
+            patient_phone.trim(),
+            finalAddress,
+            finalGender,
+            finalAge,
+            finalNextVisit,
+            finalRoomNumber,
             service,
             qty || 1,
             amount || total || 0,
             total || 0,
             mode_of_payment,
             finalAmountPaid,
-            finalBalance
+            finalBalance,
+            options
         );
 
         if (!receipt) {
@@ -150,19 +183,40 @@ async function receiptDetails(req, res, next) {
 async function updateReceipt(req, res) {
     try {
         const receipt_id = req.params.receipt_id;
-        const { patient_name, patient_phone, service, qty, amount, total, mode_of_payment, amount_paid, balance } = req.body;
+        const { patient_name, patient_phone, patient_address, patient_gender, patient_age, patient_next_visit, room_number, service, qty, amount, total, mode_of_payment, amount_paid, balance } = req.body;
 
-        // Fetch the receipt details to pre-fill the form
+        // Validate required fields
+        if (!patient_name || !patient_name.trim()) {
+            return res.status(400).json({ message: "Patient name is required" });
+        }
+        if (!patient_phone || !patient_phone.trim()) {
+            return res.status(400).json({ message: "Patient phone is required" });
+        }
+
+        // Fetch the receipt details
         const receipt = await ReceiptItem.getReceiptDetails(receipt_id);
         if (!receipt) {
             logger.warn(`Receipt with ID ${receipt_id} not found`);
             return res.status(404).json({ message: "Receipt not found" });
         }
 
+        // Convert empty strings to null/undefined
+        const finalGender = patient_gender && patient_gender.trim() ? patient_gender : null;
+        const finalAge = patient_age ? parseInt(patient_age) : null;
+        const finalAddress = patient_address && patient_address.trim() ? patient_address : null;
+        const finalNextVisit = patient_next_visit && patient_next_visit.trim() ? patient_next_visit : null;
+        const finalRoomNumber = room_number && room_number.trim() ? room_number : null;
+
+        // Update receipt information
         const updated = await ReceiptItem.updateReceipt(
             receipt_id,
-            patient_name,
-            patient_phone,
+            patient_name.trim(),
+            patient_phone.trim(),
+            finalAddress,
+            finalGender,
+            finalAge,
+            finalNextVisit,
+            finalRoomNumber,
             service,
             qty || 1,
             amount || total || 0,
@@ -190,5 +244,111 @@ async function updateReceipt(req, res) {
     }
 }
 
-module.exports = { addReceipt, getAllReceipts, receiptDetails, deleteReciept, updateReceipt };
+async function viewPatientRecords(req, res) {
+    try {
+        const patient_phone = req.params.patient_phone;
+        const patientDetails = await ReceiptItem.getPatientDetails(patient_phone);
+        const patientReceipts = await ReceiptItem.getReceiptsByPatient(patient_phone);
+
+        if (!patientDetails) {
+            logger.warn(`Patient with phone ${patient_phone} not found`);
+            return res.status(404).render("error", {
+                message: "Patient not found",
+                user: req.user
+            });
+        }
+
+        // Process receipts to format services
+        patientReceipts.forEach(receipt => {
+            if (typeof receipt.service === "string") {
+                try {
+                    receipt.service = JSON.parse(receipt.service).join(", ");
+                } catch (e) {
+                    // If parsing fails, leave as is
+                }
+            }
+        });
+
+        return res.render("patientRecords", {
+            title: "Patient Records",
+            patientDetails,
+            patientReceipts,
+            user: req.user
+        });
+    } catch (error) {
+        logger.error(`Error in viewPatientRecords: ${error.message}`, error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+async function searchOldPatients(req, res) {
+    try {
+        const patientName = req.query.name;
+        
+        if (!patientName || !patientName.trim()) {
+            return res.status(400).json({ message: "Patient name is required" });
+        }
+
+        // Import the old DB model
+        const oldDbModel = require("../models/oldDb-model");
+        const oldPatients = await oldDbModel.searchByName(patientName);
+
+        return res.json({
+            success: true,
+            data: oldPatients || [],
+            count: oldPatients ? oldPatients.length : 0
+        });
+    } catch (error) {
+        logger.error(`Error in searchOldPatients: ${error.message}`, error);
+        return res.status(500).json({ 
+            success: false, 
+            message: "Error searching patient records",
+            data: []
+        });
+    }
+}
+
+// Check if patient name already exists in database
+async function checkDuplicateName(req, res) {
+    try {
+        const { patient_name } = req.body;
+
+        if (!patient_name || !patient_name.trim()) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Patient name is required" 
+            });
+        }
+
+        const db = require("../config/db")();
+        const connection = await db;
+        const existingPatients = await ReceiptItem.getExistingPatientByName(connection, patient_name.trim());
+        await connection.end();
+
+        if (existingPatients && existingPatients.length > 0) {
+            return res.json({
+                success: true,
+                exists: true,
+                message: `Found ${existingPatients.length} patient(s) with this name`,
+                patients: existingPatients
+            });
+        }
+
+        return res.json({
+            success: true,
+            exists: false,
+            message: "No matching patient found",
+            patients: []
+        });
+    } catch (error) {
+        logger.error(`Error in checkDuplicateName: ${error.message}`, error);
+        return res.status(500).json({ 
+            success: false, 
+            message: "Error checking for duplicate names",
+            exists: null
+        });
+    }
+}
+
+module.exports = { addReceipt, getAllReceipts, receiptDetails, deleteReciept, updateReceipt, viewPatientRecords, searchOldPatients, checkDuplicateName };
 
