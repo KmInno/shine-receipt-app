@@ -243,7 +243,7 @@
                                 <tr>
                                     <td><strong>#<%= receipt.id %></strong></td>
                                     <td><%= new Date(receipt.created_at).toLocaleDateString('en-GB') %></td>
-                                    <td><%= receipt.service %></td>
+                                    <td><%= formatService(receipt.service) %></td>
                                     <td>UGX <%= Number(receipt.total).toLocaleString('en-US') %></td>
                                     <td>UGX <%= Number(receipt.amount_paid).toLocaleString('en-US') %></td>
                                     <td>
@@ -363,8 +363,57 @@
             return html;
         }
     </script>
+
+<button id="scrollToBottomBtn" title="Scroll to bottom">↓</button>
+
+<script>
+    const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+    
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            scrollToBottomBtn.style.display = 'block';
+        } else {
+            scrollToBottomBtn.style.display = 'none';
+        }
+    });
+    
+    scrollToBottomBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth'
+        });
+    });
+</script>
+
+<style>
+    #scrollToBottomBtn {
+        display: none;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    #scrollToBottomBtn:hover {
+        background: #0056b3;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        transform: scale(1.1);
+    }
+
+    #scrollToBottomBtn:active {
+        transform: scale(0.95);
+    }
+</style>
 </body>
 
 </html>
-
-<%- include('partials/footer') %>

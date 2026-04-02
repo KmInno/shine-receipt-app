@@ -24,10 +24,10 @@ async function getExpensesPage(req, res, next) {
 // Add new expense
 async function addExpense(req, res, next) {
     try {
-        const { category, amount } = req.body;
+        const { description, category, amount } = req.body;
         
         // Validate input
-        if (!category || !amount) {
+        if (!description || !category || !amount) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -35,7 +35,7 @@ async function addExpense(req, res, next) {
             return res.status(400).json({ message: "Amount must be a valid positive number" });
         }
 
-        await ExpensesModel.createExpense(category, parseFloat(amount), req.user.id);
+        await ExpensesModel.createExpense(description, category, parseFloat(amount), req.user.id);
 
         res.status(201).json({ message: "Expense added successfully" });
     } catch (error) {
@@ -124,12 +124,24 @@ async function updateExpense(req, res, next) {
 async function deleteExpense(req, res, next) {
     try {
         const { id } = req.params;
+        // Check permission: admin or creator only
+        const expense = await ExpensesModel.getExpenseById(id);
+        if (!expense) {
+            return res.status(404).json({ message: "Expense not found" });
+        }
+
+        const isCreator = req.user && Number(req.user.id) === Number(expense.created_by);
+
+        if (!isCreator) {
+            return res.status(403).json({ message: "Forbidden: you don't have permission to delete this expense" });
+        }
+
         const deleted = await ExpensesModel.deleteExpense(id);
 
         if (deleted) {
             res.status(200).json({ message: "Expense deleted successfully" });
         } else {
-            res.status(404).json({ message: "Expense not found" });
+            res.status(500).json({ message: "Failed to delete expense" });
         }
     } catch (error) {
         logger.error(`Error in deleteExpense: ${error.message}`, error);

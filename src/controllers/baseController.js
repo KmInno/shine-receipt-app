@@ -3,6 +3,7 @@ const ReceiptModel = require("../models/receiptModel");
 const InvoiceModel = require("../models/invoiceModel");
 const SalesReportModel = require("../models/salesReportModel");
 const ExpensesModel = require("../models/expensesModel");
+const AppointmentModel = require("../models/appointmentModel");
 const logger = require("../utils/logger");
 
 // Helper function to get today's date in local timezone (not UTC)
@@ -45,6 +46,15 @@ baseController.buildHome = async function (req, res, next) {
         if (req.user && req.user.usertype && req.user.usertype !== 'admin') {
             const recentReceipts = receipts.slice(-5).reverse();
             const recentInvoices = invoices.slice(-5).reverse();
+            
+            // Get upcoming appointments for normal users
+            let upcomingAppointments = [];
+            try {
+                upcomingAppointments = await AppointmentModel.getPatientsWithUpcomingVisits();
+            } catch (error) {
+                logger.warn(`Could not fetch upcoming appointments: ${error.message}`);
+            }
+            
             return res.render("simpleDashboard", {
                 title: "Dashboard",
                 user: req.user,
@@ -55,7 +65,8 @@ baseController.buildHome = async function (req, res, next) {
                 dailySales: dailySalesData.total_sales || 0,
                 dailyExpenses: dailyExpensesData || 0,
                 paidSalesCount: paidSalesCount,
-                outstandingAmount: outstandingAmount
+                outstandingAmount: outstandingAmount,
+                upcomingAppointments
             });
         }
 
@@ -75,6 +86,14 @@ baseController.buildHome = async function (req, res, next) {
         // Get recent items (last 5)
         const recentReceipts = receipts.slice(-5).reverse();
         const recentInvoices = invoices.slice(-5).reverse();
+        
+        // Get upcoming appointments (7 days)
+        let upcomingAppointments = [];
+        try {
+            upcomingAppointments = await AppointmentModel.getPatientsWithUpcomingVisits();
+        } catch (error) {
+            logger.warn(`Could not fetch upcoming appointments: ${error.message}`);
+        }
 
         res.render("dashboard", {
             title: "Dashboard",
@@ -94,7 +113,8 @@ baseController.buildHome = async function (req, res, next) {
             paidSalesCount: paidSalesCount,
             outstandingAmount: outstandingAmount,
             recentReceipts,
-            recentInvoices
+            recentInvoices,
+            upcomingAppointments
         });
     } catch (error) {
         logger.error(`Error in buildHome: ${error.message}`, error);

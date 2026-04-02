@@ -364,6 +364,44 @@
 
     <!-- Main Content Cards -->
     <div class="dash-grid">
+        <!-- Appointments Section -->
+        <div class="dash-card">
+            <div class="card-head">
+                <h3><i class="fas fa-calendar-check"></i> Upcoming Appointments</h3>
+                <span class="stat"><%= upcomingAppointments && upcomingAppointments.length ? upcomingAppointments.length : 0 %></span>
+            </div>
+
+            <div class="card-body">
+                <% if (upcomingAppointments && upcomingAppointments.length > 0) { %>
+                    <ul class="recent-list">
+                        <% upcomingAppointments.slice(0, 5).forEach(function(a){ %>
+                            <li style="border-left-color: <%= a.days_until_visit === 0 ? '#dc3545' : a.days_until_visit === 1 ? '#ffc107' : '#28a745' %>;">
+                                <a href="/appointments" style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span><i class="fas fa-circle-check"></i> <%= a.patient_name %></span>
+                                    <span style="font-size: 11px; color: #999;">
+                                        <% if (a.days_until_visit === 0) { %>
+                                            TODAY
+                                        <% } else if (a.days_until_visit === 1) { %>
+                                            Tomorrow
+                                        <% } else { %>
+                                            <%= a.days_until_visit %> days
+                                        <% } %>
+                                    </span>
+                                </a>
+                            </li>
+                        <% }) %>
+                    </ul>
+                    <% if (upcomingAppointments.length > 5) { %>
+                        <a href="/appointments" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">
+                            <i class="fas fa-arrow-right"></i> View All (<%= upcomingAppointments.length %>)
+                        </a>
+                    <% } %>
+                <% } else { %>
+                    <p class="muted">No appointments in the next 7 days</p>
+                <% } %>
+            </div>
+        </div>
+
         <div class="dash-card">
             <div class="card-head">
                 <h3><i class="fas fa-receipt"></i> Receipts</h3>
@@ -414,23 +452,23 @@
 
         <div class="dash-card">
             <div class="card-head">
-                <h3><i class="fas fa-chart-line"></i> Quick Access</h3>
+                <h3><i class="fas fa-chart-line"></i> Quick Actions</h3>
                 <span class="stat"><i class="fas fa-arrow-right"></i></span>
             </div>
 
             <div class="card-body">
                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <a href="/blank" class="btn btn-outline" style="width: 100%; justify-content: center;">
-                        <i class="fas fa-chart-bar"></i> Blank page/ header page
+                    <a href="/receipt" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                        <i class="fas fa-plus-circle"></i> New Receipt
                     </a>
-                    <a href="/sales-report/daily" class="btn btn-outline" style="width: 100%; justify-content: center;">
-                        <i class="fas fa-chart-bar"></i> Daily Report
+                    <a href="/invoices/new" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                        <i class="fas fa-plus-circle"></i> New Invoice
+                    </a>
+                    <a href="/appointments" class="btn btn-outline" style="width: 100%; justify-content: center;">
+                        <i class="fas fa-calendar"></i> View Appointments
                     </a>
                     <a href="/expenses" class="btn btn-outline" style="width: 100%; justify-content: center;">
                         <i class="fas fa-money-bill-wave"></i> Manage Expenses
-                    </a>
-                    <a href="/dashboard" class="btn btn-outline" style="width: 100%; justify-content: center;">
-                        <i class="fas fa-th-large"></i> Full Dashboard
                     </a>
                 </div>
             </div>

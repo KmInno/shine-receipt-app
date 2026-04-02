@@ -2,11 +2,11 @@ const initializeDatabase = require("../config/db");
 const logger = require("../utils/logger");
 
 // Create a new expense
-async function createExpense(category, amount, created_by) {
+async function createExpense(description, category, amount, created_by) {
     const db = await initializeDatabase();
     try {
-        const sql = "INSERT INTO expenses (category, amount, created_by) VALUES (?, ?, ?)";
-        const [result] = await db.query(sql, [category, amount, created_by]);
+        const sql = "INSERT INTO expenses (description, category, amount, created_by) VALUES (?, ?, ?, ?)";
+        const [result] = await db.query(sql, [description, category, amount, created_by]);
         return result;
     } catch (error) {
         logger.error(`Error in createExpense: ${error.message}`, error);
@@ -38,6 +38,20 @@ async function getExpensesByDate(date) {
         return result;
     } catch (error) {
         logger.error(`Error in getExpensesByDate: ${error.message}`, error);
+        throw error;
+    } finally {
+        await db.end();
+    }
+}
+
+// Get single expense by id
+async function getExpenseById(id) {
+    const db = await initializeDatabase();
+    try {
+        const [result] = await db.query("SELECT * FROM expenses WHERE id = ?", [id]);
+        return result.length > 0 ? result[0] : null;
+    } catch (error) {
+        logger.error(`Error in getExpenseById: ${error.message}`, error);
         throw error;
     } finally {
         await db.end();
@@ -142,6 +156,7 @@ module.exports = {
     createExpense,
     getAllExpenses,
     getExpensesByDate,
+    getExpenseById,
     getExpensesByDateRange,
     getTotalExpensesByDate,
     getExpensesByCategory,

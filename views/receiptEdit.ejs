@@ -29,7 +29,7 @@
     <input type="text" id="room_number" name="room_number" value="<%= receipt.room_number || '' %>">
 
     <label for="service">Service:</label>
-    <input type="text" id="service" name="service" value="<%= receipt.service %>" required>
+    <input type="text" id="service" name="service" value="<%= formatService(receipt.service) %>" required>
 
     <label for="total">Total:</label>
     <input type="number" id="total" name="total" value="<%= receipt.total %>" required>

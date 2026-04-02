@@ -192,7 +192,7 @@
                         <tr>
 
                             <td>
-                                <%= item.name || item.service || item %>
+                                <%= typeof item === 'object' ? (item.name || item.service || JSON.stringify(item)) : item %>
                             </td>
 
                             <td>

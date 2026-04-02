@@ -1,6 +1,7 @@
 const ReceiptItem = require("../models/receiptModel");
 const accountModel = require("../models/accounts-model");
 const logger = require("../utils/logger");
+const formatService = require("../utils/serviceFormatter");
 
 async function addReceipt(req, res) {
     try {
@@ -107,9 +108,8 @@ async function getAllReceipts(req, res, next) {
     try {
         const data = await ReceiptItem.getReceipts();
         data.forEach(receipt => {
-            if (typeof receipt.service === "string") {
-                receipt.service = JSON.parse(receipt.service).join(", ");
-            }
+            // Use formatService to safely handle any service format
+            receipt.service = formatService(receipt.service);
 
             // Format phone numbers to replace '0' with '256'
             if (receipt.patient_phone.startsWith('0')) {
@@ -146,7 +146,7 @@ async function receiptDetails(req, res, next) {
         }
 
         if (typeof data.service === "string") {
-            data.service = JSON.parse(data.service).join(", ");
+            data.service = formatService(data.service);
         }
 
         // Log current signed-in user for debugging
@@ -260,13 +260,7 @@ async function viewPatientRecords(req, res) {
 
         // Process receipts to format services
         patientReceipts.forEach(receipt => {
-            if (typeof receipt.service === "string") {
-                try {
-                    receipt.service = JSON.parse(receipt.service).join(", ");
-                } catch (e) {
-                    // If parsing fails, leave as is
-                }
-            }
+            receipt.service = formatService(receipt.service);
         });
 
         return res.render("patientRecords", {

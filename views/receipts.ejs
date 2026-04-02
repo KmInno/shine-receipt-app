@@ -12,6 +12,35 @@
         .hidden {
             display: none;
         }
+
+        /* Scroll to bottom button */
+        #scrollToBottomBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #589f14;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        #scrollToBottomBtn:hover {
+            background: #4a7c0e;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            transform: scale(1.1);
+        }
+
+        #scrollToBottomBtn:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 
@@ -137,8 +166,27 @@
             phoneElement.textContent = formattedNumber;
         });
     </script>
+
+<button id="scrollToBottomBtn" title="Scroll to bottom">↓</button>
+
+<script>
+    const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+    
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            scrollToBottomBtn.style.display = 'block';
+        } else {
+            scrollToBottomBtn.style.display = 'none';
+        }
+    });
+    
+    scrollToBottomBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth'
+        });
+    });
+</script>
 </body>
 
 </html>
-
-<%- include('partials/footer') %>

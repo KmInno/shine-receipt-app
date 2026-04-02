@@ -461,8 +461,51 @@
                 </div>
             <% } %>
         </div>
+
+        <!-- Upcoming Appointments (Next 7 Days) -->
+        <div class="section">
+            <div class="section-title"><i class="fas fa-calendar-check"></i> Upcoming Appointments (Next 7 Days)</div>
+            <% if (upcomingAppointments && upcomingAppointments.length > 0) { %>
+                <table class="recent-table">
+                    <thead>
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Phone</th>
+                            <th>Next Visit Date</th>
+                            <th>Days Until</th>
+                            <th>Age</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% upcomingAppointments.forEach(appointment => { %>
+                            <tr>
+                                <td><strong><%= appointment.patient_name %></strong></td>
+                                <td><%= appointment.patient_phone %></td>
+                                <td><%= new Date(appointment.next_visit).toLocaleDateString('en-GB') %></td>
+                                <td>
+                                    <% if (appointment.days_until_visit === 0) { %>
+                                        <span style="background-color: #fecaca; color: #7f1d1d; padding: 4px 8px; border-radius: 4px; font-weight: 600;">TODAY</span>
+                                    <% } else if (appointment.days_until_visit === 1) { %>
+                                        <span style="background-color: #fed7aa; color: #92400e; padding: 4px 8px; border-radius: 4px; font-weight: 600;">Tomorrow</span>
+                                    <% } else { %>
+                                        <span style="background-color: #dbeafe; color: #0c4a6e; padding: 4px 8px; border-radius: 4px; font-weight: 600;"><%= appointment.days_until_visit %> days</span>
+                                    <% } %>
+                                </td>
+                                <td><%= appointment.age || '-' %></td>
+                                <td><a href="/appointments" style="color: #007bff; text-decoration: none;">View All</a></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+                <a href="/appointments" class="view-all-link">View All Appointments →</a>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-state-icon">📅</div>
+                    <p>No appointments scheduled for the next 7 days</p>
+                </div>
+            <% } %>
+        </div>
     </div>
 </body>
 </html>
-
-<%- include('partials/footer') %>

@@ -97,7 +97,7 @@ async function getPatientsWithUpcomingVisits() {
                 MAX(created_at) as last_visit,
                 DATEDIFF(next_visit, CURDATE()) as days_until_visit
             FROM receipts
-            WHERE next_visit IS NOT NULL AND next_visit >= CURDATE()
+            WHERE next_visit IS NOT NULL AND next_visit >= CURDATE() AND next_visit <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
             GROUP BY patient_phone, patient_name, patient_address, gender, age, next_visit
             ORDER BY next_visit ASC
         `);

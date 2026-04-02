@@ -232,3 +232,36 @@
 2026-03-23T07:26:37.139Z [INFO]: Dashboard: Using today's date: 2026-03-23
 2026-03-23T11:10:06.679Z [INFO]: Dashboard: Using today's date: 2026-03-23
 2026-03-23T11:10:22.398Z [INFO]: Dashboard: Using today's date: 2026-03-23
+2026-03-23T11:27:06.812Z [INFO]: Dashboard: Using today's date: 2026-03-23
+2026-03-23T12:18:59.778Z [INFO]: Dashboard: Using today's date: 2026-03-23
+2026-03-23T15:05:08.310Z [INFO]: Dashboard: Using today's date: 2026-03-23
+2026-03-23T15:40:02.012Z [ERROR]: Error in createExpense: Unknown column 'description' in 'field list' Unknown column 'description' in 'field list'
+2026-03-23T15:40:02.017Z [ERROR]: Error in addExpense: Unknown column 'description' in 'field list' Unknown column 'description' in 'field list'
+2026-03-23T15:42:38.698Z [ERROR]: Error checking patient by name: Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'receipt_app.receipts.patient_address' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'receipt_app.receipts.patient_address' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+2026-03-23T15:42:44.898Z [ERROR]: Error checking patient by name: Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'receipt_app.receipts.patient_address' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'receipt_app.receipts.patient_address' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+2026-03-23T15:42:44.970Z [INFO]: New patient assigned ID: sds-26-03-010
+2026-04-02T07:49:39.921Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T07:49:48.918Z [INFO]: Daily Report: Using date 2026-04-02
+2026-04-02T08:05:01.259Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:07:47.848Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:08:38.938Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:15:12.386Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:16:06.580Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:16:08.361Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:22:35.387Z [ERROR]: Error in deleteExpense: ExpensesModel.getExpenseById is not a function ExpensesModel.getExpenseById is not a function
+2026-04-02T08:39:10.621Z [ERROR]: Error checking patient by name: Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'receipt_app.receipts.patient_address' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'receipt_app.receipts.patient_address' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+2026-04-02T08:41:16.218Z [ERROR]: Error checking patient by name: Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'receipt_app.receipts.patient_address' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'receipt_app.receipts.patient_address' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+2026-04-02T08:41:21.734Z [INFO]: New patient assigned ID: sds-26-04-001
+2026-04-02T08:42:04.711Z [INFO]: Daily Report: Using date 2026-04-02
+2026-04-02T08:42:15.649Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:45:39.348Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:46:01.415Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:46:02.516Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:46:03.603Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:46:06.955Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:47:06.056Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:47:54.391Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:49:08.816Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:50:59.496Z [INFO]: Dashboard: Using today's date: 2026-04-02
+2026-04-02T08:58:24.616Z [INFO]: Daily Report: Using date 2026-04-02
+2026-04-02T09:02:11.298Z [INFO]: Dashboard: Using today's date: 2026-04-02

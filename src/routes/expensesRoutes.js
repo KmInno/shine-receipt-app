@@ -25,7 +25,7 @@ router.post("/add", expensesController.addExpense);
 // PUT - Update expense (requires admin)
 router.put("/:id", adminMiddleware, expensesController.updateExpense);
 
-// DELETE - Delete expense (requires admin)
-router.delete("/:id", adminMiddleware, expensesController.deleteExpense);
+// DELETE - Delete expense (users can delete their own expenses)
+router.delete("/:id", expensesController.deleteExpense);
 
 module.exports = router;

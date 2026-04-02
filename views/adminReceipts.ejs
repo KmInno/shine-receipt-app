@@ -5,108 +5,393 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Receipts</title>
     <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
-        h1 {
-            text-align: center;
-            color: #007bff;
-            margin: 20px 0;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .admin-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-header h1 i {
+            font-size: 32px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-content {
+            padding: 30px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
         }
 
         table {
-            width: 90%;
-            margin: 20px auto;
+            width: 100%;
             border-collapse: collapse;
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: white;
         }
 
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border: 1px solid #dee2e6;
+        thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
         }
 
         th {
-            background-color: #007bff;
-            color: #ffffff;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #f8f9fa;
         }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f1f3f5;
+            color: #666;
+            font-size: 14px;
         }
 
-        button {
-            background-color: #dc3545;
-            color: #ffffff;
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.01);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.02);
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #fafbfc;
+        }
+
+        tbody tr:nth-child(even):hover {
+            background-color: #f0f2f5;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-cash {
+            background: #d4f4dd;
+            color: #155724;
+        }
+
+        .badge-mobile {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .amount {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .amount.negative {
+            color: #dc3545;
+        }
+
+        .amount.positive {
+            color: #28a745;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 12px;
             border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #c82333;
-        }
-
-        a {
-            color: #007bff;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
             text-decoration: none;
-            margin-left: 10px;
         }
 
-        a:hover {
-            text-decoration: underline;
+        .btn-delete {
+            background: #ffe5e5;
+            color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background: #dc3545;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+        }
+
+        .btn-edit {
+            background: #e7f3ff;
+            color: #007bff;
+        }
+
+        .btn-edit:hover {
+            background: #007bff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-data i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-data p {
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            th, td {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+
+            .btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            table {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
-<body>
-    <h1>Admin Receipts</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Patient Name</th>
-                <th>Phone Number</th>
-                <th>Services</th>
-                <th>Total</th>
-                <th>Mode of Payment</th>
-                <th>Amount Paid</th>
-                <th>Balance</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% receipts.forEach(receipt => { %>
-                <tr>
-                    <td><%= receipt.id %></td>
-                    <td><%= new Date(receipt.created_at).toLocaleDateString('en-GB') %></td>
-                    <td><%= receipt.patient_name %></td>
-                    <td><%= receipt.patient_phone %></td>
-                    <td><%= receipt.service %></td>
-                    <td><%= receipt.total %></td>
-                    <td><%= receipt.mode_of_payment %></td>
-                    <td><%= receipt.amount_paid %></td>
-                    <td><%= receipt.balance %></td>
-                    <td>
-                        <button onclick="deleteReceipt('<%= receipt.id %>')">Delete</button>
-                        <a href="/receipts/edit/<%= receipt.id %>">Edit</a>
-                    </td>
-                </tr>
-            <% }) %>
-        </tbody>
-    </table>
+<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 0; margin: 0;">
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>
+                <i class="fas fa-receipt"></i>
+                Admin Receipts
+            </h1>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search by patient name, phone, or ID...">
+            </div>
+        </div>
+
+        <div class="admin-content">
+            <% if (receipts && receipts.length > 0) { %>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Receipts</div>
+                        <div class="stat-value"><%= receipts.length %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Amount</div>
+                        <div class="stat-value">UGX <%= receipts.reduce((sum, r) => sum + (parseFloat(r.total) || 0), 0).toLocaleString('en-US') %></div>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table id="receiptsTable">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> Receipt ID</th>
+                                <th><i class="fas fa-calendar"></i> Date</th>
+                                <th><i class="fas fa-user"></i> Patient Name</th>
+                                <th><i class="fas fa-phone"></i> Phone</th>
+                                <th><i class="fas fa-stethoscope"></i> Services</th>
+                                <th><i class="fas fa-money-bill"></i> Total</th>
+                                <th><i class="fas fa-wallet"></i> Mode</th>
+                                <th><i class="fas fa-credit-card"></i> Paid</th>
+                                <th><i class="fas fa-balance-scale"></i> Balance</th>
+                                <th><i class="fas fa-cog"></i> Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% receipts.forEach(receipt => { %>
+                                <tr class="receipt-row">
+                                    <td><strong>#<%= receipt.id %></strong></td>
+                                    <td><%= new Date(receipt.created_at).toLocaleDateString('en-GB') %></td>
+                                    <td><strong><%= receipt.patient_name %></strong></td>
+                                    <td><%= receipt.patient_phone %></td>
+                                    <td><small><%= formatService(receipt.service) %></small></td>
+                                    <td class="amount">UGX <%= Number(receipt.total).toLocaleString('en-US') %></td>
+                                    <td>
+                                        <span class="badge <%= receipt.mode_of_payment === 'cash' ? 'badge-cash' : 'badge-mobile' %>">
+                                            <i class="fas <%= receipt.mode_of_payment === 'cash' ? 'fa-coins' : 'fa-mobile-alt' %>"></i>
+                                            <%= receipt.mode_of_payment %>
+                                        </span>
+                                    </td>
+                                    <td class="amount"><%= Number(receipt.amount_paid).toLocaleString('en-US') %></td>
+                                    <td class="amount <%= Number(receipt.balance) > 0 ? 'negative' : 'positive' %>">
+                                        <%= Number(receipt.balance).toLocaleString('en-US') %>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="/receipts/edit/<%= receipt.id %>" class="btn btn-edit">
+                                                <i class="fas fa-edit"></i>
+                                                Edit
+                                            </a>
+                                            <button class="btn btn-delete" onclick="deleteReceipt('<%= receipt.id %>')">
+                                                <i class="fas fa-trash"></i>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="no-data">
+                    <i class="fas fa-inbox"></i>
+                    <p>No receipts found</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <button id="scrollToBottomBtn" title="Scroll to bottom">↓</button>
+
     <script>
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const table = document.getElementById('receiptsTable');
+        const rows = table ? table.querySelectorAll('tbody tr') : [];
+
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const filter = this.value.toLowerCase();
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(filter) ? '' : 'none';
+                });
+            });
+        }
+
+        // Delete receipt
         async function deleteReceipt(receiptId) {
-            if (confirm("Are you sure you want to delete this receipt?")) {
+            if (confirm("Are you sure you want to delete this receipt? This action cannot be undone.")) {
                 try {
                     const response = await fetch(`/receipts/delete/${receiptId}`, {
                         method: 'DELETE'
@@ -120,11 +405,56 @@
                     }
                 } catch (error) {
                     alert("Error deleting receipt");
+                    console.error(error);
                 }
             }
         }
+
+        // Scroll to bottom button
+        const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollToBottomBtn.style.display = 'block';
+            } else {
+                scrollToBottomBtn.style.display = 'none';
+            }
+        });
+        
+        scrollToBottomBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: document.documentElement.scrollHeight,
+                behavior: 'smooth'
+            });
+        });
     </script>
-    
-    <%- include('partials/footer') %>
-</body>
-</html>
+
+    <style>
+        #scrollToBottomBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        #scrollToBottomBtn:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+            transform: scale(1.15);
+        }
+
+        #scrollToBottomBtn:active {
+            transform: scale(0.95);
+        }
+    </style>
